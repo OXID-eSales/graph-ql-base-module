@@ -49,6 +49,26 @@ class Token
         return $storage->isLoaded();
     }
 
+    public function isTokenExpired(string $tokenId): bool
+    {
+        $queryBuilder = $this->queryBuilderFactory->create()
+            ->select('oxid')
+            ->from('oegraphqltoken')
+            ->where('OXID = :tokenId')
+            ->andWhere('EXPIRES_AT <= NOW()')
+            ->setParameters([
+                'tokenId' => $tokenId,
+            ]);
+
+        $result = $queryBuilder->execute();
+
+        if (is_object($result)) {
+            return $result->fetchOne() > 0;
+        }
+
+        return false;
+    }
+
     public function removeExpiredTokens(UserInterface $user): void
     {
         $queryBuilder = $this->queryBuilderFactory->create()

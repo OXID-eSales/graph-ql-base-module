@@ -41,7 +41,7 @@ class TokenValidator
      */
     public function validateToken(UnencryptedToken $token): void
     {
-        if (!$this->areConstraintsValid($token)) {
+        if (!$this->areConstraintsValid($token) || $this->isTokenExpired($token)) {
             throw new InvalidToken();
         }
 
@@ -60,6 +60,11 @@ class TokenValidator
         $validator = $config->validator();
 
         return $validator->validate($token, ...$config->validationConstraints());
+    }
+
+    private function isTokenExpired(UnencryptedToken $token): bool
+    {
+        return $this->tokenInfrastructure->isTokenExpired($token->claims()->get(Token::CLAIM_TOKENID));
     }
 
     private function isUserBlocked(?string $userId): bool

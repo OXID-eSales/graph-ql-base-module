@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - New methods:
     - `OxidEsales\GraphQL\Base\Infrastructure\RefreshTokenRepositoryInterface::invalidateUserTokens`
     - `OxidEsales\GraphQL\Base\Infrastructure\Token::invalidateUserTokens`
+    - `OxidEsales\GraphQL\Base\Infrastructure\Token::isTokenExpired`
   - New event subscriber:
     - `OxidEsales\GraphQL\Base\Event\Subscriber\PasswordChangeSubscriber`
 
