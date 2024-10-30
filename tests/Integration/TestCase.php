@@ -323,6 +323,11 @@ class TokenInfrastructureStub extends TokenInfrastructure
         return true;
     }
 
+    public function isTokenExpired(string $tokenId): bool
+    {
+        return false;
+    }
+
     public function registerToken(UnencryptedToken $token, DateTimeImmutable $time, DateTimeImmutable $expire): void
     {
     }

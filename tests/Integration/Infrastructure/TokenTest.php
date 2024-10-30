@@ -13,13 +13,13 @@ use DateTimeImmutable;
 use Lcobucci\JWT\Token\DataSet;
 use Lcobucci\JWT\UnencryptedToken;
 use OxidEsales\Eshop\Application\Model\User;
-use OxidEsales\EshopCommunity\Internal\Framework\Database\ConnectionProviderInterface;
 use OxidEsales\EshopCommunity\Tests\Integration\IntegrationTestCase;
 use OxidEsales\EshopCommunity\Tests\TestContainerFactory;
 use OxidEsales\GraphQL\Base\DataType\Token as TokenDataType;
 use OxidEsales\GraphQL\Base\DataType\User as UserDataType;
 use OxidEsales\GraphQL\Base\Infrastructure\Model\Token as TokenModel;
 use OxidEsales\GraphQL\Base\Infrastructure\Token as TokenInfrastructure;
+use OxidEsales\GraphQL\Base\Service\Token;
 use OxidEsales\GraphQL\Base\Service\Token as TokenService;
 
 class TokenTest extends IntegrationTestCase
@@ -31,9 +31,6 @@ class TokenTest extends IntegrationTestCase
     /** @var TokenInfrastructure */
     private $tokenInfrastructure;
 
-    /** @var ConnectionProviderInterface */
-    private $connection;
-
     public function setUp(): void
     {
         parent::setUp();
@@ -41,7 +38,6 @@ class TokenTest extends IntegrationTestCase
         $container = $containerFactory->create();
         $container->compile();
         $this->tokenInfrastructure = $container->get(TokenInfrastructure::class);
-        $this->connection = $container->get(ConnectionProviderInterface::class)->get();
     }
 
     public function testRegisterToken(): void
@@ -72,6 +68,28 @@ class TokenTest extends IntegrationTestCase
     public function testIsTokenRegisteredNo(): void
     {
         $this->assertFalse($this->tokenInfrastructure->isTokenRegistered('not_registered_token'));
+    }
+
+    public function testIsTokenExpired(): void
+    {
+        $this->tokenInfrastructure->registerToken(
+            $this->getTokenMock('valid_token'),
+            new DateTimeImmutable('now'),
+            new DateTimeImmutable('+8 hours')
+        );
+
+        $this->assertFalse($this->tokenInfrastructure->isTokenExpired('valid_token'));
+    }
+
+    public function testIsTokenExpiredNo(): void
+    {
+        $this->tokenInfrastructure->registerToken(
+            $this->getTokenMock('expired_token'),
+            new DateTimeImmutable('now'),
+            new DateTimeImmutable('-8 hours')
+        );
+
+        $this->assertTrue($this->tokenInfrastructure->isTokenExpired('expired_token'));
     }
 
     public function testRemoveExpiredTokens(): void
@@ -323,13 +341,7 @@ class TokenTest extends IntegrationTestCase
         );
 
         $this->tokenInfrastructure->invalidateUserTokens($userId);
-        $result = $this->connection->executeQuery(
-            "select expires_at from `oegraphqltoken` where oxid=:tokenId",
-            ['tokenId' => $token]
-        );
-        $expiresAtAfterChange = $result->fetchOne();
-
-        $this->assertTrue(new DateTimeImmutable($expiresAtAfterChange) <= new DateTimeImmutable('now'));
+        $this->assertTrue($this->tokenInfrastructure->isTokenExpired($token));
     }
 
     public function testInvalidateAccessTokensWrongUserId(): void
@@ -344,13 +356,7 @@ class TokenTest extends IntegrationTestCase
         );
 
         $this->tokenInfrastructure->invalidateUserTokens('wrong_user_id');
-        $result = $this->connection->executeQuery(
-            "select expires_at from `oegraphqltoken` where oxid=:tokenId",
-            ['tokenId' => $token]
-        );
-        $expiresAtAfterChange = $result->fetchOne();
-
-        $this->assertFalse(new DateTimeImmutable($expiresAtAfterChange) <= new DateTimeImmutable('now'));
+        $this->assertFalse($this->tokenInfrastructure->isTokenExpired($token));
     }
 
     private function getTokenMock(

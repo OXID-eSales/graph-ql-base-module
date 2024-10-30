@@ -26,7 +26,7 @@ class TokenValidatorTest extends BaseTestCase
 
         $tokenInfrastructure = $this->createPartialMock(
             TokenInfrastructure::class,
-            ['registerToken', 'isTokenRegistered', 'removeExpiredTokens', 'canIssueToken']
+            ['registerToken', 'isTokenRegistered', 'isTokenExpired', 'removeExpiredTokens', 'canIssueToken']
         );
         $tokenInfrastructure->method('isTokenRegistered')->willReturn(true);
         $tokenInfrastructure->method('canIssueToken')->willReturn(true);
@@ -54,7 +54,7 @@ class TokenValidatorTest extends BaseTestCase
 
         $tokenInfrastructure = $this->createPartialMock(
             TokenInfrastructure::class,
-            ['registerToken', 'isTokenRegistered', 'removeExpiredTokens', 'canIssueToken']
+            ['registerToken', 'isTokenRegistered', 'isTokenExpired', 'removeExpiredTokens', 'canIssueToken']
         );
         $tokenInfrastructure->method('isTokenRegistered')->willReturn(true);
         $tokenInfrastructure->method('canIssueToken')->willReturn(true);
@@ -85,7 +85,7 @@ class TokenValidatorTest extends BaseTestCase
 
         $tokenInfrastructure = $this->createPartialMock(
             TokenInfrastructure::class,
-            ['registerToken', 'isTokenRegistered', 'removeExpiredTokens', 'canIssueToken']
+            ['registerToken', 'isTokenRegistered', 'isTokenExpired', 'removeExpiredTokens', 'canIssueToken']
         );
         $tokenInfrastructure->method('isTokenRegistered')->willReturn(true);
         $tokenInfrastructure->method('canIssueToken')->willReturn(true);
@@ -108,7 +108,7 @@ class TokenValidatorTest extends BaseTestCase
 
         $tokenInfrastructure = $this->createPartialMock(
             TokenInfrastructure::class,
-            ['registerToken', 'isTokenRegistered', 'removeExpiredTokens', 'canIssueToken']
+            ['registerToken', 'isTokenRegistered', 'isTokenExpired', 'removeExpiredTokens', 'canIssueToken']
         );
         $tokenInfrastructure->method('isTokenRegistered')->willReturn(true);
         $tokenInfrastructure->method('canIssueToken')->willReturn(true);
@@ -134,7 +134,7 @@ class TokenValidatorTest extends BaseTestCase
 
         $tokenInfrastructure = $this->createPartialMock(
             TokenInfrastructure::class,
-            ['registerToken', 'isTokenRegistered', 'removeExpiredTokens', 'canIssueToken']
+            ['registerToken', 'isTokenRegistered', 'isTokenExpired', 'removeExpiredTokens', 'canIssueToken']
         );
         $tokenInfrastructure->method('isTokenRegistered')->willReturn(false);
         $tokenInfrastructure->method('canIssueToken')->willReturn(true);
@@ -157,7 +157,7 @@ class TokenValidatorTest extends BaseTestCase
 
         $tokenInfrastructure = $this->createPartialMock(
             TokenInfrastructure::class,
-            ['registerToken', 'isTokenRegistered', 'removeExpiredTokens', 'canIssueToken']
+            ['registerToken', 'isTokenRegistered', 'isTokenExpired', 'removeExpiredTokens', 'canIssueToken']
         );
         $tokenInfrastructure->method('canIssueToken')->willReturn(true);
         $validator = $this->getTokenValidator($legacy, $tokenInfrastructure);
