@@ -39,7 +39,7 @@
         "codeception/module-asserts": "^3.0"
     },
   "conflict": {
-    "oxid-esales/oxideshop-ce": "<7.1"
+    "oxid-esales/oxideshop-ce": "<7.2"
   },
     "autoload": {
         "psr-4": {
