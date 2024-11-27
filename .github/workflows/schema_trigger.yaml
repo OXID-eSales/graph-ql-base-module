@@ -2,7 +2,7 @@ name: Trigger schema workflow
 
 on:
     push:
-        tags: [ v10.* ]
+        tags: [v10.*]
 
 jobs:
     documentation_schema:
