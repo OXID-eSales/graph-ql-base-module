@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace OxidEsales\Graphql\Base\Tests\Codeception\Config;
+namespace OxidEsales\GraphQL\Base\Tests\Codeception\Config;
 
 use OxidEsales\Codeception\Module\Database\DatabaseDefaultsFileGenerator;
 use OxidEsales\Facts\Config\ConfigFile;
