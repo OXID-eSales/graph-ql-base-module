@@ -40,7 +40,7 @@ jobs:
                        ;;
                   esac
                   # shellcheck disable=SC2088
-                  TESTPLAN="~/defaults/7.2.x.yaml,${LIMIT}~/graphql-base.yaml"
+                  TESTPLAN="~/defaults/7.3.x.yaml,${LIMIT}~/graphql-base.yaml"
                   echo "testplan=${TESTPLAN}" | tee -a "${GITHUB_OUTPUT}"
 
     dispatch_stable:
