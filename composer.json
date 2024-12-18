@@ -5,14 +5,6 @@
     "keywords": ["oxid", "modules", "eShop", "GraphQL"],
     "homepage": "https://www.oxid-esales.com",
     "license": ["proprietary"],
-    "extra": {
-        "oxideshop": {
-            "target-directory": "oe/graphql-base",
-            "blacklist-filter": [
-                "tests/**/*"
-            ]
-        }
-    },
     "require": {
         "php": "^8.2",
         "ext-json": "*",
