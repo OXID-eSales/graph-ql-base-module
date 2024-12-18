@@ -58,9 +58,9 @@ sonarcloud:
     project_key: 'OXID-eSales_graphql-base-module'
     project_name: '{{ $org}}/{{ $name }}'
     parameters: |
-        -Dsonar.language=php
-        -Dsonar.scm.provider=git
-        -Dsonar.sources=src
+        -Dsonar.language=php \
+        -Dsonar.scm.provider=git \
+        -Dsonar.sources=src \
         -Dsonar.tests=tests
 
 finish:
