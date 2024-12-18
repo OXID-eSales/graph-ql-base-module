@@ -11,8 +11,8 @@ namespace OxidEsales\GraphQL\Base\Tests\Integration\Infrastructure;
 
 use DateTime;
 use DateTimeImmutable;
-use Doctrine\DBAL\Connection;
-use OxidEsales\EshopCommunity\Internal\Framework\Database\ConnectionProviderInterface;
+use OxidEsales\EshopCommunity\Core\Di\ContainerFacade;
+use OxidEsales\EshopCommunity\Internal\Framework\Database\ConnectionFactoryInterface;
 use OxidEsales\GraphQL\Base\DataType\UserInterface;
 use OxidEsales\GraphQL\Base\Exception\InvalidRefreshToken;
 use OxidEsales\GraphQL\Base\Infrastructure\RefreshTokenRepository;
@@ -23,6 +23,13 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(RefreshTokenRepository::class)]
 class RefreshTokenRepositoryTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        $this->cleanUp();
+
+        parent::tearDown();
+    }
+
     public function testGetNewRefreshTokenGivesCorrectlyFilledDataType(): void
     {
         $sut = $this->getSut();
@@ -172,21 +179,18 @@ class RefreshTokenRepositoryTest extends TestCase
         $this->assertTrue($sut->getTokenUser($token) instanceof UserInterface);
     }
 
-    private function getDbConnection(): Connection
-    {
-        return $this->get(ConnectionProviderInterface::class)->get();
-    }
-
     public function getSut(): RefreshTokenRepositoryInterface
     {
-        return $this->get(RefreshTokenRepositoryInterface::class);
+        return self::$container->get(RefreshTokenRepositoryInterface::class);
     }
 
     private function checkRefreshTokenWithIdExists(string $oxid): bool
     {
-        $result = $this->getDbConnection()->executeQuery(
-            "select count(*) from `oegraphqlrefreshtoken` where OXID=:oxid",
-            ['oxid' => $oxid]
+        $result = ContainerFacade::get(ConnectionFactoryInterface::class)
+            ->create()
+            ->executeQuery(
+                "select count(*) from `oegraphqlrefreshtoken` where OXID=:oxid",
+                ['oxid' => $oxid]
         );
 
         return $result->fetchOne() > 0;
@@ -200,11 +204,22 @@ class RefreshTokenRepositoryTest extends TestCase
     ): void {
         $insertTokensQuery = "insert into `oegraphqlrefreshtoken` (OXID, OXUSERID, TOKEN, EXPIRES_AT)
             values (:oxid, :oxuserid, :token, :expires)";
-        $this->getDbConnection()->executeQuery($insertTokensQuery, [
+        ContainerFacade::get(ConnectionFactoryInterface::class)
+            ->create()
+            ->executeQuery($insertTokensQuery, [
             "oxid" => $oxid,
             "oxuserid" => $userId ?? uniqid(),
             'token' => $token ?? uniqid(),
             "expires" => $expires,
         ]);
+    }
+
+    private function cleanUp(): void
+    {
+        ContainerFacade::get(ConnectionFactoryInterface::class)
+            ->create()
+            ->executeQuery(
+                'truncate table `oegraphqlrefreshtoken`'
+            );
     }
 }

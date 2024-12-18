@@ -12,8 +12,8 @@ namespace OxidEsales\GraphQL\Base\Tests\Integration;
 use DateTimeImmutable;
 use Lcobucci\JWT\UnencryptedToken;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
-use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
-use OxidEsales\EshopCommunity\Tests\Integration\IntegrationTestCase;
+use OxidEsales\EshopCommunity\Core\Di\ContainerFacade;
+use OxidEsales\EshopCommunity\Internal\Framework\Database\ConnectionFactoryInterface;
 use OxidEsales\EshopCommunity\Tests\TestContainerFactory;
 use OxidEsales\Facts\Facts;
 use OxidEsales\GraphQL\Base\DataType\UserInterface;
@@ -30,8 +30,10 @@ use OxidEsales\GraphQL\Base\Service\Token;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use PHPUnit\Framework\TestCase as FrameworkTestCase;
 
-abstract class TestCase extends IntegrationTestCase
+
+abstract class TestCase extends FrameworkTestCase
 {
     protected static $queryResult;
 
@@ -42,17 +44,13 @@ abstract class TestCase extends IntegrationTestCase
 
     protected static $query;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $connection = ContainerFactory::getInstance()
-            ->getContainer()
-            ->get(QueryBuilderFactoryInterface::class)
+        ContainerFacade::get(ConnectionFactoryInterface::class)
             ->create()
-            ->getConnection();
-
-        $connection->executeStatement(
+            ->executeStatement(
             file_get_contents(
                 __DIR__ . '/../Fixtures/dump.sql'
             )
@@ -63,6 +61,9 @@ abstract class TestCase extends IntegrationTestCase
         if (static::$container !== null) {
             return;
         }
+
+      #  ContainerFactory::resetContainer();
+
         $containerFactory = new TestContainerFactory();
         static::$container = $containerFactory->create();
 
@@ -97,13 +98,21 @@ abstract class TestCase extends IntegrationTestCase
             'oxidesales.graphqlbase.cacheadapter',
             $cache
         );
+        static::$container->setParameter(
+            'oxid_esales.db.replicate',
+            false
+        );
+        static::$container->setParameter(
+            'oxid_esales.db.replicas',
+            []
+        );
 
         static::beforeContainerCompile();
 
         static::$container->compile();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         static::$queryResult = null;
@@ -116,6 +125,8 @@ abstract class TestCase extends IntegrationTestCase
             }
             unset($_SERVER['HTTP_AUTHORIZATION']);
         }
+
+      #  ContainerFactory::resetContainer();
     }
 
     protected function setAuthToken(string $token): void

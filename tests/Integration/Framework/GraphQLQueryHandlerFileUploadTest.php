@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Tests\Integration\Framework;
 
+use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Container\BootstrapContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\DIContainer\Dao\ProjectYamlDao;
 use OxidEsales\EshopCommunity\Internal\Framework\DIContainer\Service\ProjectYamlImportService;
@@ -34,6 +35,8 @@ class GraphQLQueryHandlerFileUploadTest extends TestCase
 
     public function testFileUpload(): void
     {
+        ContainerFactory::resetContainer();
+
         $expected = file_get_contents(self::UPLOAD_FILE);
         $result = $this->uploadFile(self::UPLOAD_FILE, $this->getMutationData());
 

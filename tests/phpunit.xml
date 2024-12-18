@@ -5,6 +5,7 @@
          cacheDirectory=".phpunit.cache"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
          displayDetailsOnTestsThatTriggerWarnings="true"
+         processIsolation="true"
 >
   <testsuites>
     <testsuite name="Unit">

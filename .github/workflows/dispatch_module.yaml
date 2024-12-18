@@ -13,7 +13,7 @@ on:
                     - 'PHP8.3/MySQL5.7'
                     - 'PHP8.3/MySQL8.0'
                     - 'PHP8.3/MariaDb11'
-                default: 'PHP8.2/MySQL5.7'
+                default: 'PHP8.3/MySQL8.0'
                 description: 'Limit to one PHP/MySQL combination'
 
 jobs:
@@ -40,7 +40,7 @@ jobs:
                        ;;
                   esac
                   # shellcheck disable=SC2088
-                  TESTPLAN="~/defaults/7.3.x.yaml,${LIMIT}~/graphql-base.yaml"
+                  TESTPLAN="~/defaults/8.0.x.yaml,${LIMIT}~/graphql-base.yaml"
                   echo "testplan=${TESTPLAN}" | tee -a "${GITHUB_OUTPUT}"
 
     dispatch_stable:

@@ -9,14 +9,10 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Tests\Codeception\Config;
 
+use OxidEsales\Codeception\Module\Database;
 use OxidEsales\Codeception\Module\Database\DatabaseDefaultsFileGenerator;
-use OxidEsales\Facts\Config\ConfigFile;
 use OxidEsales\Facts\Facts;
 use Symfony\Component\Filesystem\Path;
-
-if ($shopRootPath = getenv('SHOP_ROOT_PATH')) {
-    require_once(Path::join($shopRootPath, 'source', 'bootstrap.php'));
-}
 
 class CodeceptionParametersProvider {
 
@@ -35,7 +31,7 @@ class CodeceptionParametersProvider {
             'DB_HOST' => $facts->getDatabaseHost(),
             'DB_PORT' => $facts->getDatabasePort(),
             'MODULE_DUMP_PATH' => $this->getModuleTestDataDumpFilePath(),
-            'MYSQL_CONFIG_PATH' => $this->getMysqlConfigPath(),
+            'MYSQL_CONFIG_PATH' => $this->generateMysqlStarUpConfigurationFile(),
             'PHP_BIN' => $php,
         ];
     }
@@ -45,14 +41,16 @@ class CodeceptionParametersProvider {
         return Path::join(__DIR__, '..', 'Support', 'Data', 'dump.sql');
     }
 
-    private function getMysqlConfigPath()
+    private function generateMysqlStarUpConfigurationFile(): string
     {
         $facts = new Facts();
-        $configFile = new ConfigFile($facts->getSourcePath() . '/config.inc.php');
 
-        $generator = new DatabaseDefaultsFileGenerator($configFile);
-
-        return $generator->generate();
+        return Database::generateStartupOptionsFile(
+            $facts->getDatabaseUserName(),
+            $facts->getDatabasePassword(),
+            $facts->getDatabaseHost(),
+            $facts->getDatabasePort(),
+        );
     }
 }
 
