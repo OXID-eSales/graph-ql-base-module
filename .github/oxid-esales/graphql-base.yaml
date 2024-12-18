@@ -17,6 +17,12 @@ install_shop_with_modules:
                     "oxid-esales/developer-tools": "{{ .Data.global.composer.dev_ref }}",
                     "{{ $org }}/{{ $name }}": "{{ .Data.global.composer.ref_name }}"
                 },
+                 "autoload-dev":{
+                    "psr-4": {
+                      "OxidEsales\\EshopCommunity\\Tests\\": "./vendor/oxid-esales/oxideshop-ce/tests",
+                      "OxidEsales\\Graphql\\Base\\Tests\\": "./vendor/oxid-esales/graphql-base/tests"
+                    }
+                },
                 "repositories": {
                   "{{ $org }}/{{ $name }}": {
                     "type": "git",
