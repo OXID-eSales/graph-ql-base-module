@@ -14,6 +14,7 @@ use Lcobucci\JWT\UnencryptedToken;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Core\Di\ContainerFacade;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\ConnectionFactoryInterface;
+use OxidEsales\EshopCommunity\Tests\Integration\IntegrationTestCase;
 use OxidEsales\EshopCommunity\Tests\TestContainerFactory;
 use OxidEsales\Facts\Facts;
 use OxidEsales\GraphQL\Base\DataType\UserInterface;
@@ -30,10 +31,8 @@ use OxidEsales\GraphQL\Base\Service\Token;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use PHPUnit\Framework\TestCase as FrameworkTestCase;
 
-
-abstract class TestCase extends FrameworkTestCase
+abstract class TestCase extends IntegrationTestCase
 {
     protected static $queryResult;
 
@@ -44,7 +43,7 @@ abstract class TestCase extends FrameworkTestCase
 
     protected static $query;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -61,9 +60,6 @@ abstract class TestCase extends FrameworkTestCase
         if (static::$container !== null) {
             return;
         }
-
-      #  ContainerFactory::resetContainer();
-
         $containerFactory = new TestContainerFactory();
         static::$container = $containerFactory->create();
 
@@ -112,7 +108,7 @@ abstract class TestCase extends FrameworkTestCase
         static::$container->compile();
     }
 
-    protected function tearDown(): void
+    public function tearDown(): void
     {
         parent::tearDown();
         static::$queryResult = null;
@@ -125,8 +121,6 @@ abstract class TestCase extends FrameworkTestCase
             }
             unset($_SERVER['HTTP_AUTHORIZATION']);
         }
-
-      #  ContainerFactory::resetContainer();
     }
 
     protected function setAuthToken(string $token): void
