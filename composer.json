@@ -12,7 +12,7 @@
         "lcobucci/jwt": "^4.1",
         "symfony/cache": "*",
         "ecodev/graphql-upload": "^7.0.0",
-        "laminas/laminas-diactoros": "^2.5",
+        "laminas/laminas-diactoros": "^3.5",
         "myclabs/php-enum": "^1.8"
     },
     "require-dev": {
