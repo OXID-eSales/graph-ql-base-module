@@ -77,7 +77,7 @@ class ModuleConfiguration
             ->toString();
 
         if (strlen($signature) < 64) {
-            throw MissingSignatureKey::wrongSize();
+            throw new MissingSignatureKey();
         }
 
         return $signature;

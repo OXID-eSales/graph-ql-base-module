@@ -52,7 +52,7 @@ class TokenAdministrationTest extends BaseTestCase
             $moduleSetup
         );
         $filterList = new TokenFilterList(new IDFilter(new ID('unknown')));
-        $sort = TokenSorting::fromUserInput();
+        $sort = new TokenSorting();
         $pagination = new Pagination();
 
         $this->expectException(InvalidLogin::class);
@@ -84,7 +84,7 @@ class TokenAdministrationTest extends BaseTestCase
             $moduleSetup
         );
         $filterList = new TokenFilterList(new IDFilter(new ID('_testuserid')));
-        $sort = TokenSorting::fromUserInput();
+        $sort = new TokenSorting();
         $pagination = new Pagination();
 
         $tokenAdministration->tokens($filterList, $pagination, $sort);
