@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Tests\Unit\DataType\Filter;
 
+use Generator;
 use Doctrine\DBAL\Query\Expression\CompositeExpression;
 use Exception;
 use InvalidArgumentException;
@@ -155,7 +156,7 @@ class StringFilterTest extends DataTypeTestCase
         $this->assertFalse($initFilter->matches($stringForFalseCase));
     }
 
-    public static function matchesDataProvider(): \Generator
+    public static function matchesDataProvider(): Generator
     {
         yield "test match equals" => [
             'stringForTrueCase' => 'test theme 1',

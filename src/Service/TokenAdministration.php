@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Service;
 
-use OxidEsales\GraphQL\Base\DataType\Filter\IDFilter;
 use OxidEsales\GraphQL\Base\DataType\Pagination\Pagination;
 use OxidEsales\GraphQL\Base\DataType\Sorting\TokenSorting;
 use OxidEsales\GraphQL\Base\DataType\Token as TokenDataType;
@@ -76,7 +75,7 @@ class TokenAdministration
     }
 
     /**
-     * @throws \OxidEsales\GraphQL\Base\Exception\NotFound
+     * @throws NotFound
      */
     public function customerTokensDelete(?ID $customerId): int
     {

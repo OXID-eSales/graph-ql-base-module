@@ -9,14 +9,16 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Tests\Codeception\Helper;
 
+use Codeception\Module;
+use OxidEsales\EshopCommunity\Core\Di\ContainerFacade;
+use OxidEsales\EshopCommunity\Internal\Transition\Utility\BasicContextInterface;
 use Exception;
-use OxidEsales\Facts\Facts;
 
-class Acceptance extends \Codeception\Module
+class Acceptance extends Module
 {
     public function _beforeSuite($settings = []): void // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
     {
-        $rootPath = (new Facts())->getShopRootPath();
+        $rootPath = ContainerFacade::get(BasicContextInterface::class)->getShopRootPath();
         $possiblePaths = [
             '/bin/oe-console',
             '/vendor/bin/oe-console',

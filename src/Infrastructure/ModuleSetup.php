@@ -9,10 +9,8 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Infrastructure;
 
-use OxidEsales\DoctrineMigrationWrapper\MigrationsBuilder;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerBuilderFactory;
 use OxidEsales\GraphQL\Base\Service\ModuleConfiguration;
-use Symfony\Component\Console\Output\BufferedOutput;
 
 /**
  * @codeCoverageIgnore

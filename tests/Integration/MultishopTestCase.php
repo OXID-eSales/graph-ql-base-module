@@ -9,6 +9,10 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Tests\Integration;
 
+use OxidEsales\Eshop\Application\Model\Shop;
+use OxidEsales\Eshop\Core\DbMetaDataHandler;
+use OxidEsales\Eshop\Core\UtilsObject;
+use OxidEsales\Eshop\Core\ConfigFile;
 use OxidEsales\Eshop\Core\DatabaseProvider;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
@@ -40,7 +44,7 @@ abstract class MultishopTestCase extends EnterpriseTestCase
     {
         $database = DatabaseProvider::getDb();
 
-        $shop = oxNew(\OxidEsales\Eshop\Application\Model\Shop::class);
+        $shop = oxNew(Shop::class);
 
         if ($shop->load($shopId)) {
             return;
@@ -70,7 +74,7 @@ abstract class MultishopTestCase extends EnterpriseTestCase
         Registry::getConfig()->setShopId($shopId);
         $container->get(ShopConfigurationDaoBridgeInterface::class)->save($shopConfiguration);
 
-        $metaData = oxNew(\OxidEsales\Eshop\Core\DbMetaDataHandler::class);
+        $metaData = oxNew(DbMetaDataHandler::class);
         $metaData->updateViews();
 
         $moduleInstaller = new ModuleInstaller(Registry::getConfig());
@@ -86,11 +90,11 @@ abstract class MultishopTestCase extends EnterpriseTestCase
     protected function cleanupCachedRegistry(): void
     {
         Registry::getConfig()->reinitialize();
-        $utilsObject = \OxidEsales\Eshop\Core\UtilsObject::getInstance();
+        $utilsObject = UtilsObject::getInstance();
         $utilsObject->resetInstanceCache();
 
         $keepThese = [
-            \OxidEsales\Eshop\Core\ConfigFile::class,
+            ConfigFile::class,
         ];
         $registryKeys = Registry::getKeys();
 

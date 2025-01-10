@@ -19,7 +19,6 @@ use OxidEsales\GraphQL\Base\DataType\Token as TokenDataType;
 use OxidEsales\GraphQL\Base\DataType\User as UserDataType;
 use OxidEsales\GraphQL\Base\Infrastructure\Model\Token as TokenModel;
 use OxidEsales\GraphQL\Base\Infrastructure\Token as TokenInfrastructure;
-use OxidEsales\GraphQL\Base\Service\Token;
 use OxidEsales\GraphQL\Base\Service\Token as TokenService;
 
 class TokenTest extends IntegrationTestCase

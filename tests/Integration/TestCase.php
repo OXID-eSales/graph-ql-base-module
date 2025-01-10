@@ -9,6 +9,9 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Tests\Integration;
 
+use OxidEsales\Eshop\Core\Registry;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Psr\Log\AbstractLogger;
 use DateTimeImmutable;
 use Lcobucci\JWT\UnencryptedToken;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
@@ -58,7 +61,7 @@ abstract class TestCase extends IntegrationTestCase
             )
         );
 
-        \OxidEsales\Eshop\Core\Registry::getLang()->resetBaseLanguage();
+        Registry::getLang()->resetBaseLanguage();
 
         if (static::$container !== null) {
             return;
@@ -92,7 +95,7 @@ abstract class TestCase extends IntegrationTestCase
             get_class($logger)
         );
 
-        $cache = new \Symfony\Component\Cache\Adapter\ArrayAdapter();
+        $cache = new ArrayAdapter();
         static::$container->set(
             'oxidesales.graphqlbase.cacheadapter',
             $cache
@@ -345,7 +348,7 @@ class RequestReaderStub extends RequestReader
     }
 }
 
-class LoggerStub extends \Psr\Log\AbstractLogger
+class LoggerStub extends AbstractLogger
 {
     public function log($level, $message, array $context = []): void
     {
@@ -353,7 +356,7 @@ class LoggerStub extends \Psr\Log\AbstractLogger
     }
 }
 
-class ModuleConfigurationStub extends \OxidEsales\GraphQL\Base\Service\ModuleConfiguration
+class ModuleConfigurationStub extends ModuleConfiguration
 {
     public function __construct()
     {

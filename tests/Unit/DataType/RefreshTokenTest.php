@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Tests\Unit\DataType;
 
+use DateTime;
 use Codeception\PHPUnit\TestCase;
 use OxidEsales\GraphQL\Base\DataType\RefreshToken;
 use OxidEsales\GraphQL\Base\Infrastructure\Model\RefreshToken as RefreshTokenModel;
@@ -35,8 +36,8 @@ class RefreshTokenTest extends TestCase
             ['oxuserid', $exampleUserId = uniqid()],
             ['oxshopid', $exampleShopId = uniqid()],
             ['token', $exampleToken = uniqid()],
-            ['issued_at', $exampleIssuedAt = (new \DateTime('now'))->format(\DateTime::ATOM)],
-            ['expires_at', $exampleExpiresAt = (new \DateTime('+1 day'))->format(\DateTime::ATOM)],
+            ['issued_at', $exampleIssuedAt = (new DateTime('now'))->format(DateTime::ATOM)],
+            ['expires_at', $exampleExpiresAt = (new DateTime('+1 day'))->format(DateTime::ATOM)],
         ]);
 
         $sut = new RefreshToken($modelMock);
@@ -46,7 +47,7 @@ class RefreshTokenTest extends TestCase
         $this->assertSame($exampleShopId, $sut->shopId()->val());
         $this->assertSame($exampleToken, $sut->token());
 
-        $this->assertSame($exampleIssuedAt, $sut->createdAt()->format(\DateTime::ATOM));
-        $this->assertSame($exampleExpiresAt, $sut->expiresAt()->format(\DateTime::ATOM));
+        $this->assertSame($exampleIssuedAt, $sut->createdAt()->format(DateTime::ATOM));
+        $this->assertSame($exampleExpiresAt, $sut->expiresAt()->format(DateTime::ATOM));
     }
 }

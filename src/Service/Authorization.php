@@ -14,8 +14,6 @@ use OxidEsales\GraphQL\Base\Framework\PermissionProviderInterface;
 use OxidEsales\GraphQL\Base\Infrastructure\Legacy as LegacyService;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use TheCodingMachine\GraphQLite\Security\AuthorizationServiceInterface;
-
-use function array_search;
 use function is_bool;
 
 class Authorization implements AuthorizationServiceInterface

@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Framework;
 
-use GraphQL\Error\DebugFlag;
+use Closure;
 use GraphQL\Error\Error;
 use GraphQL\Error\FormattedError;
 use GraphQL\Executor\ExecutionResult;
@@ -94,7 +94,7 @@ class GraphQLQueryHandler
         self::$errors[] = $error;
     }
 
-    private function getErrorFormatter(): \Closure
+    private function getErrorFormatter(): Closure
     {
         return function (Error $error) {
             $this->logger->error($error->getMessage(), [$error]);

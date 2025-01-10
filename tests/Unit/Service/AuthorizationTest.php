@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Tests\Unit\Service;
 
-use Lcobucci\JWT\Token;
+use Lcobucci\JWT\Token\DataSet;
 use Lcobucci\JWT\UnencryptedToken;
 use OxidEsales\GraphQL\Base\Event\BeforeAuthorization;
 use OxidEsales\GraphQL\Base\Framework\PermissionProviderInterface;
@@ -171,7 +171,7 @@ class AuthorizationTest extends BaseTestCase
 
     private function getTokenMock(): UnencryptedToken
     {
-        $claims = new Token\DataSet(
+        $claims = new DataSet(
             [
                 TokenService::CLAIM_USERNAME => 'testuser',
             ],

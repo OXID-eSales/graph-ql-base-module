@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Infrastructure;
 
+use Doctrine\DBAL\Driver\Statement;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Lcobucci\JWT\UnencryptedToken;
@@ -84,7 +85,7 @@ class Token
 
     public function deleteOrphanedTokens(): void
     {
-        /** @var \Doctrine\DBAL\Driver\Statement $execute */
+        /** @var Statement $execute */
         $execute = $this->queryBuilderFactory->create()
             ->select('t.oxid')
             ->from('oegraphqltoken', 't')

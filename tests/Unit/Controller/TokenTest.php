@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Tests\Unit\Controller;
 
-use Lcobucci\JWT\UnencryptedToken;
 use OxidEsales\GraphQL\Base\Controller\Token as TokenController;
 use OxidEsales\GraphQL\Base\DataType\Filter\DateFilter;
 use OxidEsales\GraphQL\Base\DataType\Filter\IDFilter;

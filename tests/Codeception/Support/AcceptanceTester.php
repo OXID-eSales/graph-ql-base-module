@@ -9,6 +9,10 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Tests\Codeception;
 
+use Codeception\Actor;
+use OxidEsales\GraphQL\Base\Tests\Codeception\_generated\AcceptanceTesterActions;
+use Codeception\Lib\Friend;
+
 /**
  * Inherited Methods
  *
@@ -21,11 +25,11 @@ namespace OxidEsales\GraphQL\Base\Tests\Codeception;
  * @method void am($role)
  * @method void lookForwardTo($achieveValue)
  * @method void comment($description)
- * @method \Codeception\Lib\Friend haveFriend($name, $actorClass = null)
+ * @method Friend haveFriend($name, $actorClass = null)
  *
  * @SuppressWarnings(PHPMD)
  */
-class AcceptanceTester extends \Codeception\Actor
+class AcceptanceTester extends Actor
 {
-    use _generated\AcceptanceTesterActions;
+    use AcceptanceTesterActions;
 }

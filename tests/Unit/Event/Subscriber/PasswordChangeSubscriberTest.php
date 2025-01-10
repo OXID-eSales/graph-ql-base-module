@@ -11,7 +11,6 @@ namespace OxidEsales\GraphQL\Base\Tests\Unit\Event\Subscriber;
 
 use OxidEsales\Eshop\Application\Model\Article;
 use OxidEsales\Eshop\Application\Model\User;
-use OxidEsales\Eshop\Core\Model\BaseModel;
 use OxidEsales\EshopCommunity\Internal\Transition\ShopEvents\AfterModelUpdateEvent;
 use OxidEsales\EshopCommunity\Internal\Transition\ShopEvents\BeforeModelUpdateEvent;
 use OxidEsales\GraphQL\Base\Event\Subscriber\PasswordChangeSubscriber;
