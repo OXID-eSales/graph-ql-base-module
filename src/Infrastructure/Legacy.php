@@ -48,7 +48,7 @@ class Legacy
             return new User($user, false);
         }
 
-        $user->setId(self::createUniqueIdentifier());
+        $user->setId($this->createUniqueIdentifier());
         return new User($user, true);
     }
 
@@ -126,7 +126,7 @@ class Legacy
         return $userGroupIds;
     }
 
-    public static function createUniqueIdentifier(): string
+    public function createUniqueIdentifier(): string
     {
         $utils = Registry::getUtilsObject();
         return $utils->generateUId();

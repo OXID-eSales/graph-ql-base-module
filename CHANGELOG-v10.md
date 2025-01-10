@@ -6,8 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [10.1.0] - unreleased
 
-## Changed
+### Changed
 - Update module to work with OXID eShop 7.3
+- Replaced `TokenFilterList::fromUserInput` and `TokenSorting::fromUserInput` with direct object instantiation
+- Removed static access for `Legacy::createUniqueIdentifier()` and made it an instance method
+- Updated `MissingSignatureKey` exception to use a constructor instead of a static factory method
+
+### Removed
+- `fromUserInput` factory methods from `TokenFilterList` and `TokenSorting`.
 
 ## [10.0.0] - 2024-11-27
 This is stable release for v10.0.0. No changes have been made since v10.0.0-rc.1.

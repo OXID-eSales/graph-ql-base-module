@@ -37,9 +37,9 @@ class TokenTest extends BaseTestCase
         $tokenAdministration = $this->createPartialMock(TokenAdministration::class, ['tokens']);
         $tokenAdministration->method('tokens')
             ->with(
-                TokenFilterList::fromUserInput(new IDFilter($authentication->getUser()->id())),
+                new TokenFilterList(new IDFilter($authentication->getUser()->id())),
                 new Pagination(),
-                TokenSorting::fromUserInput(TokenSorting::SORTING_ASC)
+                new TokenSorting(TokenSorting::SORTING_ASC),
             )
             ->willReturn([]);
 
@@ -56,12 +56,12 @@ class TokenTest extends BaseTestCase
         $authentication->method('getUser')
             ->willReturn(new UserDataType($this->getUserModelStub('_testuserid')));
 
-        $filterList = TokenFilterList::fromUserInput(
+        $filterList = new TokenFilterList(
             new IDFilter(new ID('someone_else')),
             new IDFilter(new ID(1)),
             new DateFilter(null, ['2021-01-12 12:12:12', '2021-12-31 12:12:12'])
         );
-        $sort = TokenSorting::fromUserInput(TokenSorting::SORTING_DESC);
+        $sort = new TokenSorting(TokenSorting::SORTING_DESC);
         $pagination = Pagination::fromUserInput(10, 20);
 
         $tokenAdministration = $this->createPartialMock(TokenAdministration::class, ['tokens']);

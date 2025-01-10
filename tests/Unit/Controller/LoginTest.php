@@ -72,6 +72,7 @@ class LoginTest extends BaseTestCase
         $user = new User($userModelStub);
 
         $this->legacy->method('login')->with($username, $password)->willReturn($user);
+        $this->legacy->method('createUniqueIdentifier')->willReturn(uniqid());
 
         $loginController = new Login(
             $this->tokenService,

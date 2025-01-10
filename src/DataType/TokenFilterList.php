@@ -13,13 +13,18 @@ use OxidEsales\GraphQL\Base\DataType\Filter\BoolFilter;
 use OxidEsales\GraphQL\Base\DataType\Filter\DateFilter;
 use OxidEsales\GraphQL\Base\DataType\Filter\FilterListInterface;
 use OxidEsales\GraphQL\Base\DataType\Filter\IDFilter;
-use TheCodingMachine\GraphQLite\Annotations\Factory;
+use TheCodingMachine\GraphQLite\Annotations\Field;
+use TheCodingMachine\GraphQLite\Annotations\Input;
 
+#[Input]
 final class TokenFilterList implements FilterListInterface
 {
     public function __construct(
+        #[Field]
         private readonly ?IDFilter $customerId = null,
+        #[Field]
         private readonly ?IDFilter $shopId = null,
+        #[Field]
         private readonly ?DateFilter $expiresAt = null
     ) {
     }
@@ -58,16 +63,5 @@ final class TokenFilterList implements FilterListInterface
             'oxshopid' => $this->shopId,
             'expires_at' => $this->expiresAt,
         ];
-    }
-
-    /**
-     * @Factory(name="TokenFilterList",default=true)
-     */
-    public static function fromUserInput(
-        ?IDFilter $customerId,
-        ?IDFilter $shopId = null,
-        ?DateFilter $expiresAt = null
-    ): self {
-        return new self($customerId, $shopId, $expiresAt);
     }
 }

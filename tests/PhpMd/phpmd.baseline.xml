@@ -1,13 +1,10 @@
 <?xml version="1.0"?>
 <phpmd-baseline>
   <violation rule="PHPMD\Rule\CleanCode\StaticAccess" file="src/Component/Widget/GraphQL.php"/>
-  <violation rule="PHPMD\Rule\CleanCode\StaticAccess" file="src/Controller/Token.php"/>
   <violation rule="PHPMD\Rule\Naming\ShortMethodName" file="src/DataType/RefreshTokenInterface.php" method="id"/>
   <violation rule="PHPMD\Rule\Naming\ShortMethodName" file="src/DataType/UserInterface.php" method="id"/>
   <violation rule="PHPMD\Rule\CleanCode\StaticAccess" file="src/Framework/GraphQLQueryHandler.php"/>
   <violation rule="PHPMD\Rule\CleanCode\StaticAccess" file="src/Framework/RequestReader.php"/>
   <violation rule="PHPMD\Rule\CleanCode\StaticAccess" file="src/Infrastructure/Legacy.php"/>
   <violation rule="PHPMD\Rule\CleanCode\StaticAccess" file="src/Service/JwtConfigurationBuilder.php"/>
-  <violation rule="PHPMD\Rule\CleanCode\StaticAccess" file="src/Service/ModuleConfiguration.php"/>
-  <violation rule="PHPMD\Rule\CleanCode\StaticAccess" file="src/Service/Token.php"/>
 </phpmd-baseline>

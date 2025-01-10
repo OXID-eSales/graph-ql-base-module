@@ -13,8 +13,8 @@ class MissingSignatureKey extends Error
 {
     protected const WRONG_SIZE_MESSAGE = 'Signature key is too short';
 
-    public static function wrongSize(): self
+    public function __construct()
     {
-        return new self(self::WRONG_SIZE_MESSAGE);
+        parent::__construct(self::WRONG_SIZE_MESSAGE);
     }
 }

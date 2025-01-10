@@ -92,7 +92,7 @@ class Token
             ->withClaim(self::CLAIM_USERNAME, $user->email())
             ->withClaim(self::CLAIM_USERID, $user->id()->val())
             ->withClaim(self::CLAIM_USER_ANONYMOUS, $user->isAnonymous())
-            ->withClaim(self::CLAIM_TOKENID, Legacy::createUniqueIdentifier());
+            ->withClaim(self::CLAIM_TOKENID, $this->legacyInfrastructure->createUniqueIdentifier());
 
         $event = new BeforeTokenCreation($builder, $user);
         $this->eventDispatcher->dispatch(
