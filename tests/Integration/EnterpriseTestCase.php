@@ -9,15 +9,14 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Tests\Integration;
 
-use OxidEsales\Facts\Facts;
+use OxidEsales\EshopCommunity\Internal\Framework\Edition\Edition;
+use OxidEsales\EshopCommunity\Internal\Framework\Edition\EditionDirectoriesLocator;
 
 abstract class EnterpriseTestCase extends TokenTestCase
 {
     public function setUp(): void
     {
-        $facts = new Facts();
-
-        if ($facts->getEdition() !== 'EE') {
+        if (!(new EditionDirectoriesLocator())->getEditionRootPath(Edition::Enterprise)) {
             $this->markTestSkipped('Skip EE related tests for CE/PE edition');
 
             return;

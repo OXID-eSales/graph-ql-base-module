@@ -3,71 +3,80 @@
 # {{ $name := "graphql-base" }}name: {{ $name }}
 # {{ $repo := "OXID-eSales/graphql-base-module" }}repo: {{ $repo }}
 
+install:
+  cache:
+    prepared_shop: false
+  method: 'script'
+  script: 'source/.github/oxid-esales/install.sh'
+  git:
+    repository: 'OXID-eSales/graphql-base-module'
+    ref: &ref 'b-8.0.x-GHA-OXDEV-7248'
+    shop_url: 'https://github.com/OXID-eSales/graphql-base-module.git'
+    shop_ref: 'b-8.0.x-GHA-OXDEV-7248'
+  container:
+    options: '-e ESHOP_BOOTSTRAP_PATH=vendor/oxid-esales/oxideshop-ce/source/bootstrap.php -e THEME_ID=apex'
+  composer:
+    root_url: ''
+    transform: |
+      {
+        "config": {
+          "allow-plugins": {
+              "infection/extension-installer": true,
+              "oxid-esales/oxideshop-unified-namespace-generator": true,
+              "oxid-esales/oxideshop-composer-plugin": true
+          }
+        },
+        "autoload-dev":{
+          "psr-4": {
+            "OxidEsales\\EshopCommunity\\Tests\\": "./vendor/oxid-esales/oxideshop-ce/tests"
+          }
+        }
+      }
+  custom_script_container: |
+    perl -pi -e 'print "SetEnvIf Authorization \"(.*)\" HTTP_AUTHORIZATION=\$1\n\n" if $. == 1' source/.htaccess
+    vendor/bin/oe-console oe:module:install /var/www
+    vendor/bin/oe-console oe:database:reset --force
+    vendor/bin/oe-console oe:theme:activate apex
+    vendor/bin/oe-console oe:module:activate oe_graphql_base
+
 install_shop_with_modules:
-    cache:
-        prepared_shop: false
-    composer:
-        transform: |
-            {
-                "require": {
-                    "oxid-esales/oxideshop-ce": "{{ .Data.global.composer.dev_ref }}",
-                    "oxid-esales/twig-component": "{{ .Data.global.composer.dev_ref }}",
-                    "oxid-esales/twig-admin-theme": "{{ .Data.global.composer.dev_ref }}",
-                    "oxid-esales/apex-theme": "{{ .Data.global.composer.dev_ref }}",
-                    "oxid-esales/developer-tools": "{{ .Data.global.composer.dev_ref }}",
-                    "{{ $org }}/{{ $name }}": "{{ .Data.global.composer.ref_name }}"
-                },
-                 "autoload-dev":{
-                    "psr-4": {
-                      "OxidEsales\\EshopCommunity\\Tests\\": "./vendor/oxid-esales/oxideshop-ce/tests",
-                      "OxidEsales\\Graphql\\Base\\Tests\\": "./vendor/oxid-esales/graphql-base/tests"
-                    }
-                },
-                "repositories": {
-                  "{{ $org }}/{{ $name }}": {
-                    "type": "git",
-                    "url": "https://github.com/{{ $repo }}.git"
-                  }
-                }
-            }
-    custom_script_container: |
-        perl -pi -e 'print "SetEnvIf Authorization \"(.*)\" HTTP_AUTHORIZATION=\$1\n\n" if $. == 1' source/.htaccess
-        vendor/bin/oe-console oe:database:reset --db-host=mysql --db-port=3306 --db-name=example --db-user=root --db-password=root --force
-        vendor/bin/oe-console oe:module:activate "{{ $ids }}"
-        vendor/bin/oe-console oe:theme:activate apex
+  add_services: 'selenium-chrome-debug'
+  composer:
+    root_url: ''
+    transform: ''
 
 runscript: &runscript
-    matrix:
-        script: |
-            [
-              "graphql_base:tests-unit",
-              "graphql_base:tests-integration",
-              "graphql_base:tests-codeception"
-            ]
-    graphql_base:
-        path: 'vendor/{{ $org}}/{{ $name }}'
+  matrix:
+    script: |
+      [
+        "graphql_base:tests-unit",
+        "graphql_base:tests-integration",
+        "graphql_base:tests-codeception"
+      ]
+  graphql_base:
+    path: ''
 
 runslim:
-    <<: *runscript
-    matrix:
-        script: |
-            [
-              "graphql_base:phpcs",
-              "graphql_base:phpstan",
-              "graphql_base:phpmd"
-            ]
+  <<: *runscript
+  matrix:
+    script: |
+      [
+        "graphql_base:phpcs",
+        "graphql_base:phpstan",
+        "graphql_base:phpmd"
+      ]
 
 sonarcloud:
-    matrix:
-        testplan: '["-"]'
-    strip_path: '/var/www/vendor/{{ print $org }}/{{ print $name}}/'
-    project_key: 'OXID-eSales_graphql-base-module'
-    project_name: '{{ $org}}/{{ $name }}'
-    parameters: |
-        -Dsonar.language=php \
-        -Dsonar.scm.provider=git \
-        -Dsonar.sources=src \
-        -Dsonar.tests=tests
+  matrix:
+    testplan: '["-"]'
+  strip_path: '/var/www/vendor/{{ print $org }}/{{ print $name}}/'
+  project_key: 'OXID-eSales_graphql-base-module'
+  project_name: '{{ $org}}/{{ $name }}'
+  parameters: |
+    -Dsonar.language=php \
+    -Dsonar.scm.provider=git \
+    -Dsonar.sources=src \
+    -Dsonar.tests=tests
 
 finish:
-    slack_title: '{{ print $name }} ({{ .Data.global.git.shop_ref }}) by {{ .Github.Actor }}'
+  slack_title: '{{ print $name }} ({{ .Data.global.git.shop_ref }}) by {{ .Github.Actor }}'

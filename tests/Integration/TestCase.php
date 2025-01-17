@@ -12,7 +12,8 @@ namespace OxidEsales\GraphQL\Base\Tests\Integration;
 use DateTimeImmutable;
 use Lcobucci\JWT\UnencryptedToken;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
-use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
+use OxidEsales\EshopCommunity\Core\Di\ContainerFacade;
+use OxidEsales\EshopCommunity\Internal\Framework\Database\ConnectionFactoryInterface;
 use OxidEsales\EshopCommunity\Tests\Integration\IntegrationTestCase;
 use OxidEsales\EshopCommunity\Tests\TestContainerFactory;
 use OxidEsales\Facts\Facts;
@@ -46,23 +47,20 @@ abstract class TestCase extends IntegrationTestCase
     {
         parent::setUp();
 
-        $connection = ContainerFactory::getInstance()
-            ->getContainer()
-            ->get(QueryBuilderFactoryInterface::class)
+        ContainerFacade::get(ConnectionFactoryInterface::class)
             ->create()
-            ->getConnection();
-
-        $connection->executeStatement(
-            file_get_contents(
-                __DIR__ . '/../Fixtures/dump.sql'
-            )
-        );
+            ->executeStatement(
+                file_get_contents(
+                    __DIR__ . '/../Fixtures/dump.sql'
+                )
+            );
 
         \OxidEsales\Eshop\Core\Registry::getLang()->resetBaseLanguage();
 
         if (static::$container !== null) {
             return;
         }
+
         $containerFactory = new TestContainerFactory();
         static::$container = $containerFactory->create();
 
@@ -96,6 +94,14 @@ abstract class TestCase extends IntegrationTestCase
         static::$container->set(
             'oxidesales.graphqlbase.cacheadapter',
             $cache
+        );
+        static::$container->setParameter(
+            'oxid_esales.db.replicate',
+            false
+        );
+        static::$container->setParameter(
+            'oxid_esales.db.replicas',
+            []
         );
 
         static::beforeContainerCompile();
