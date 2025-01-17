@@ -14,6 +14,7 @@ use GraphQL\Upload\UploadMiddleware;
 use Laminas\Diactoros\ServerRequestFactory;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\UnencryptedToken;
+use OxidEsales\EshopCommunity\Core\Registry;
 use OxidEsales\GraphQL\Base\Exception\UnableToParseToken;
 use OxidEsales\GraphQL\Base\Service\JwtConfigurationBuilder;
 use OxidEsales\GraphQL\Base\Service\TokenValidator;
@@ -145,6 +146,10 @@ class RequestReader
             return $value;
         }
 
+        if ($authCookie = $this->getAuthCookie()) {
+            return 'Bearer ' . $authCookie;
+        }
+
         if (function_exists('apache_request_headers')) {
             $headers = apache_request_headers();
 
@@ -158,6 +163,11 @@ class RequestReader
         }
 
         return null;
+    }
+
+    private function getAuthCookie(): ?string
+    {
+        return (string) Registry::getUtilsServer()->getOxCookie('oxapi_jwt');
     }
 
     private function getRegularHeaderValue(): ?string
