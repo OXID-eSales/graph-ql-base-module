@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Tests\Unit\DataType;
 
-use Codeception\PHPUnit\TestCase;
+use PHPUnit\Framework\TestCase;
 use OxidEsales\GraphQL\Base\DataType\RefreshToken;
 use OxidEsales\GraphQL\Base\Infrastructure\Model\RefreshToken as RefreshTokenModel;
 use PHPUnit\Framework\Attributes\CoversClass;
