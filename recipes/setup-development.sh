@@ -37,33 +37,35 @@ docker compose up --build -d php
 
 docker compose exec -T php git config --global --add safe.directory /var/www
 
-$SCRIPT_PATH/parts/shared/require_shop_edition_packages.sh -e"${edition}" -v"dev-b-7.3.x"
-$SCRIPT_PATH/parts/shared/require_twig_components.sh -e"${edition}" -b"b-7.3.x"
-$SCRIPT_PATH/parts/shared/require.sh -n"oxid-esales/developer-tools" -v"dev-b-7.3.x"
-$SCRIPT_PATH/parts/shared/require.sh -n"oxid-esales/oxideshop-doctrine-migration-wrapper" -v"dev-b-7.3.x"
-$SCRIPT_PATH/parts/shared/require_theme_dev.sh -t"apex" -b"b-7.3.x"
+$SCRIPT_PATH/parts/shared/require_shop_edition_packages.sh -e"${edition}" -v"dev-b-8.0.x"
+$SCRIPT_PATH/parts/shared/require_twig_components.sh -e"${edition}" -b"b-8.0.x"
+$SCRIPT_PATH/parts/shared/require.sh -n"oxid-esales/developer-tools" -v"dev-b-8.0.x"
+$SCRIPT_PATH/parts/shared/require.sh -n"oxid-esales/oxideshop-doctrine-migration-wrapper" -v"dev-b-8.0.x"
+$SCRIPT_PATH/parts/shared/require_theme_dev.sh -t"apex" -b"b-8.0.x"
 
 git clone https://github.com/OXID-eSales/oxapi-documentation source/documentation/oxapi-documentation
 make docpath=./source/documentation/oxapi-documentation addsphinxservice
 
 make up
 
+docker compose exec php composer update --no-interaction --no-scripts --no-plugins
+docker compose exec -T php cp /var/www/vendor/oxid-esales/oxideshop-ce/.env.dist /var/www/.env
 docker compose exec php composer update --no-interaction
 
 perl -pi\
   -e 'print "SetEnvIf Authorization \"(.*)\" HTTP_AUTHORIZATION=\$1\n\n" if $. == 1'\
   source/source/.htaccess
 
-$SCRIPT_PATH/parts/shared/setup_database.sh --no-demodata
-
 docker compose exec -T php vendor/bin/oe-console oe:module:install ./
-docker compose exec -T php vendor/bin/oe-eshop-doctrine_migration migrations:migrate
-docker compose exec -T php vendor/bin/oe-eshop-db_views_generate
+docker compose exec -T php vendor/bin/oe-console oe:database:reset --force
 
 docker compose exec -T php vendor/bin/oe-console oe:module:activate oe_graphql_base
 docker compose exec -T php vendor/bin/oe-console oe:theme:activate apex
 
-$SCRIPT_PATH/parts/shared/create_admin.sh
+email=${ADMIN_EMAIL:-noreply@oxid-esales.com}
+password=${ADMIN_PASSWORD:-admin}
+CONSOLE_PATH=$( [ -e "source/bin/oe-console" ] && echo "bin/oe-console" || echo "vendor/bin/oe-console" )
+docker compose exec -T php ${CONSOLE_PATH} oe:admin:create "$email" "$password"
 
 # Register all related project packages git repositories
 mkdir -p .idea; mkdir -p source/.idea; cp "${SCRIPT_PATH}/parts/bases/vcs.xml.base" .idea/vcs.xml

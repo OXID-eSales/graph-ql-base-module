@@ -6,6 +6,8 @@
 install:
     cache:
         prepared_shop: false
+    method: 'script'
+    script: 'source/.github/oxid-esales/install.sh'
     git:
         repository: '{{ $repo }}'
         ref: &ref '{{ .Github.RefName }}'
@@ -25,11 +27,8 @@ install:
     custom_script_container: |
         perl -pi -e 'print "SetEnvIf Authorization \"(.*)\" HTTP_AUTHORIZATION=\$1\n\n" if $. == 1' source/.htaccess
 
-        vendor/bin/oe-console oe:database:reset --db-host=mysql --db-port=3306 --db-name=example --db-user=root --db-password=root --force
         vendor/bin/oe-console oe:module:install ./
-
-        vendor/bin/oe-eshop-doctrine_migration migrations:migrate
-        vendor/bin/oe-eshop-db_views_generate
+        vendor/bin/oe-console oe:database:reset --force
 
         vendor/bin/oe-console oe:module:activate "{{ $ids }}"
         vendor/bin/oe-console oe:theme:activate apex
@@ -73,5 +72,5 @@ sonarcloud:
         -Dsonar.sources=src \
         -Dsonar.tests=tests
 
-finish:
-    slack_title: '{{ print $name }} ({{ .Data.global.git.shop_ref }}) by {{ .Github.Actor }}'
+#finish:
+#    slack_title: '{{ print $name }} ({{ .Data.global.git.shop_ref }}) by {{ .Github.Actor }}'

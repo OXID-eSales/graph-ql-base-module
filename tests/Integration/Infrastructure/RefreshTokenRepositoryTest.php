@@ -12,17 +12,31 @@ namespace OxidEsales\GraphQL\Base\Tests\Integration\Infrastructure;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
-use OxidEsales\EshopCommunity\Internal\Framework\Database\ConnectionProviderInterface;
+use OxidEsales\EshopCommunity\Core\Di\ContainerFacade;
+use OxidEsales\EshopCommunity\Internal\Framework\Database\ConnectionFactoryInterface;
 use OxidEsales\GraphQL\Base\DataType\UserInterface;
 use OxidEsales\GraphQL\Base\Exception\InvalidRefreshToken;
 use OxidEsales\GraphQL\Base\Infrastructure\RefreshTokenRepository;
 use OxidEsales\GraphQL\Base\Infrastructure\RefreshTokenRepositoryInterface;
-use OxidEsales\GraphQL\Base\Tests\Integration\TestCase;
+use OxidEsales\EshopCommunity\Tests\Integration\IntegrationTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(RefreshTokenRepository::class)]
-class RefreshTokenRepositoryTest extends TestCase
+class RefreshTokenRepositoryTest extends IntegrationTestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        ContainerFacade::get(ConnectionFactoryInterface::class)
+            ->create()
+            ->executeStatement(
+                file_get_contents(
+                    __DIR__ . '/../../Fixtures/dump.sql'
+                )
+            );
+    }
+
     public function testGetNewRefreshTokenGivesCorrectlyFilledDataType(): void
     {
         $sut = $this->getSut();
@@ -172,14 +186,14 @@ class RefreshTokenRepositoryTest extends TestCase
         $this->assertTrue($sut->getTokenUser($token) instanceof UserInterface);
     }
 
-    private function getDbConnection(): Connection
-    {
-        return $this->get(ConnectionProviderInterface::class)->get();
-    }
-
     public function getSut(): RefreshTokenRepositoryInterface
     {
         return $this->get(RefreshTokenRepositoryInterface::class);
+    }
+
+    public function getDbConnection(): Connection
+    {
+        return $this->get(ConnectionFactoryInterface::class)->create();
     }
 
     private function checkRefreshTokenWithIdExists(string $oxid): bool

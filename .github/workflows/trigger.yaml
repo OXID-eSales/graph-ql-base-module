@@ -8,7 +8,7 @@ jobs:
     call_matrix:
         uses: OXID-eSales/github-actions/.github/workflows/universal_workflow_light.yaml@v4
         with:
-            testplan: '~/defaults/7.3.x.yaml,~/defaults/php8.2_mysql8.0_only.yaml,~/graphql-base.yaml'
+            testplan: '~/defaults/8.0.x.yaml,~/defaults/php8.3_mysql8.0_only.yaml,~/graphql-base.yaml'
             runs_on: '"ubuntu-latest"'
             defaults: 'v4'
             plan_folder: '.github/oxid-esales'
