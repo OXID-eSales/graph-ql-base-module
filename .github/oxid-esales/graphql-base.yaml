@@ -10,9 +10,9 @@ install:
   script: 'source/.github/oxid-esales/install.sh'
   git:
     repository: 'OXID-eSales/graphql-base-module'
-    ref: &ref 'b-8.0.x-GHA-OXDEV-7248'
+    ref: &ref 'b-8.0.x-converted_by_script-OXDEV-7248'
     shop_url: 'https://github.com/OXID-eSales/graphql-base-module.git'
-    shop_ref: 'b-8.0.x-GHA-OXDEV-7248'
+    shop_ref: 'b-8.0.x-converted_by_script-OXDEV-7248'
   container:
     options: '-e ESHOP_BOOTSTRAP_PATH=vendor/oxid-esales/oxideshop-ce/source/bootstrap.php -e THEME_ID=apex'
   composer:
