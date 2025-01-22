@@ -18,7 +18,6 @@ abstract class EnterpriseTestCase extends TokenTestCase
     {
         if (!(new EditionDirectoriesLocator())->getEditionRootPath(Edition::Enterprise)) {
             $this->markTestSkipped('Skip EE related tests for CE/PE edition');
-
             return;
         }
 
