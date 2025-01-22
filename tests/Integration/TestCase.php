@@ -16,7 +16,6 @@ use OxidEsales\EshopCommunity\Core\Di\ContainerFacade;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\ConnectionFactoryInterface;
 use OxidEsales\EshopCommunity\Tests\Integration\IntegrationTestCase;
 use OxidEsales\EshopCommunity\Tests\TestContainerFactory;
-use OxidEsales\Facts\Facts;
 use OxidEsales\GraphQL\Base\DataType\UserInterface;
 use OxidEsales\GraphQL\Base\Framework\GraphQLQueryHandler;
 use OxidEsales\GraphQL\Base\Framework\RequestReader;
@@ -200,8 +199,7 @@ abstract class TestCase extends IntegrationTestCase
         $boundary = '-------------' . uniqid();
         $postData = $this->buildFileUpload($boundary, $fields, $map, $files);
 
-        $facts = new Facts();
-        $ch = curl_init($facts->getShopUrl() . '/graphql?lang=0&shp=1');
+        $ch = curl_init(getenv('OXID_SHOP_BASE_URL') . '/graphql?lang=0&shp=1');
 
         $headers = [
             'Connection: keep-alive',
