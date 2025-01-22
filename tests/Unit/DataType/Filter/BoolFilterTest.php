@@ -43,10 +43,10 @@ class BoolFilterTest extends DataTypeTestCase
     public function testAddQueryPartWithNoFrom(): void
     {
         $queryBuilder = $this->createQueryBuilderMock();
-        $filter = BoolFilter::fromUserInput(true);
+        $boolFilter = BoolFilter::fromUserInput(true);
 
         $this->expectException(InvalidArgumentException::class);
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $boolFilter->addToQuery($queryBuilder, 'db_field');
     }
 
     /**
@@ -55,10 +55,10 @@ class BoolFilterTest extends DataTypeTestCase
     public function testAddQueryPart(bool $filterValue): void
     {
         $queryBuilder = $this->createQueryBuilderMock();
-        $filter = BoolFilter::fromUserInput($filterValue);
+        $boolFilter = BoolFilter::fromUserInput($filterValue);
 
         $queryBuilder->select()->from('db_table');
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $boolFilter->addToQuery($queryBuilder, 'db_field');
 
         /** @var CompositeExpression $where */
         $where = $queryBuilder->getQueryPart('where');
@@ -76,10 +76,10 @@ class BoolFilterTest extends DataTypeTestCase
     public function testAddQueryPartWithAlias(): void
     {
         $queryBuilder = $this->createQueryBuilderMock();
-        $filter = BoolFilter::fromUserInput(true);
+        $boolFilter = BoolFilter::fromUserInput(true);
 
         $queryBuilder->select()->from('db_table', 'db_table_alias');
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $boolFilter->addToQuery($queryBuilder, 'db_field');
 
         /** @var CompositeExpression $where */
         $where = $queryBuilder->getQueryPart('where');

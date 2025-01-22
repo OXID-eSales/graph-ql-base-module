@@ -248,8 +248,8 @@ class GraphQLQueryHandlerTest extends TestCase
 
     protected static function beforeContainerCompile(): void
     {
-        $loader = new YamlFileLoader(static::$container, new FileLocator());
+        $yamlFileLoader = new YamlFileLoader(static::$container, new FileLocator());
         $serviceFile = __DIR__ . DIRECTORY_SEPARATOR . 'services.yaml';
-        $loader->load($serviceFile);
+        $yamlFileLoader->load($serviceFile);
     }
 }

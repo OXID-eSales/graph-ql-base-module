@@ -148,10 +148,10 @@ abstract class BaseTestCase extends TestCase
         );
     }
 
-    protected function getUserDataStub(?UserModel $model = null, bool $isAnonymous = false): UserDataType
+    protected function getUserDataStub(?UserModel $userModel = null, bool $isAnonymous = false): UserDataType
     {
         return new UserDataType(
-            $model ?: $this->createPartialMock(UserModel::class, ['getRawFieldData']),
+            $userModel ?: $this->createPartialMock(UserModel::class, ['getRawFieldData']),
             $isAnonymous
         );
     }

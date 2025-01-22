@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Tests\Unit\DataType\Filter;
 
+use Generator;
 use Doctrine\DBAL\Query\Expression\CompositeExpression;
 use Exception;
 use InvalidArgumentException;
@@ -43,32 +44,32 @@ class StringFilterTest extends DataTypeTestCase
 
     public function testBasicStringFilter(): void
     {
-        $filter = StringFilter::fromUserInput(
+        $stringFilter = StringFilter::fromUserInput(
             'equals',
             'contains',
             'beginsWith'
         );
         $this->assertSame(
             'equals',
-            $filter->equals()
+            $stringFilter->equals()
         );
         $this->assertSame(
             'contains',
-            $filter->contains()
+            $stringFilter->contains()
         );
         $this->assertSame(
             'beginsWith',
-            $filter->beginsWith()
+            $stringFilter->beginsWith()
         );
     }
 
     public function testAddQueryPartWithNoFrom(): void
     {
         $queryBuilder = $this->createQueryBuilderMock();
-        $filter = StringFilter::fromUserInput('no_from');
+        $stringFilter = StringFilter::fromUserInput('no_from');
 
         $this->expectException(InvalidArgumentException::class);
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $stringFilter->addToQuery($queryBuilder, 'db_field');
     }
 
     public function testAddQueryPartEquals(): void
@@ -76,10 +77,10 @@ class StringFilterTest extends DataTypeTestCase
         $queryBuilder = $this->createQueryBuilderMock();
 
         $string = 'equals';
-        $filter = StringFilter::fromUserInput($string);
+        $stringFilter = StringFilter::fromUserInput($string);
 
         $queryBuilder->select()->from('db_table');
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $stringFilter->addToQuery($queryBuilder, 'db_field');
 
         /** @var CompositeExpression $where */
         $where = $queryBuilder->getQueryPart('where');
@@ -94,10 +95,10 @@ class StringFilterTest extends DataTypeTestCase
         $queryBuilder = $this->createQueryBuilderMock();
 
         $string = 'contains';
-        $filter = StringFilter::fromUserInput(null, $string);
+        $stringFilter = StringFilter::fromUserInput(null, $string);
 
         $queryBuilder->select()->from('db_table');
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $stringFilter->addToQuery($queryBuilder, 'db_field');
 
         /** @var CompositeExpression $where */
         $where = $queryBuilder->getQueryPart('where');
@@ -115,10 +116,10 @@ class StringFilterTest extends DataTypeTestCase
         $queryBuilder = $this->createQueryBuilderMock();
 
         $string = 'begins';
-        $filter = StringFilter::fromUserInput(null, null, $string);
+        $stringFilter = StringFilter::fromUserInput(null, null, $string);
 
         $queryBuilder->select()->from('db_table');
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $stringFilter->addToQuery($queryBuilder, 'db_field');
 
         /** @var CompositeExpression $where */
         $where = $queryBuilder->getQueryPart('where');
@@ -134,10 +135,10 @@ class StringFilterTest extends DataTypeTestCase
     public function testAddQueryPartWithAlias(): void
     {
         $queryBuilder = $this->createQueryBuilderMock();
-        $filter = StringFilter::fromUserInput('with_alias');
+        $stringFilter = StringFilter::fromUserInput('with_alias');
 
         $queryBuilder->select()->from('db_table', 'db_table_alias');
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $stringFilter->addToQuery($queryBuilder, 'db_field');
 
         /** @var CompositeExpression $where */
         $where = $queryBuilder->getQueryPart('where');
@@ -149,13 +150,13 @@ class StringFilterTest extends DataTypeTestCase
     public function testMatches(
         string $stringForTrueCase,
         string $stringForFalseCase,
-        StringFilter $initFilter
+        StringFilter $stringFilter
     ): void {
-        $this->assertTrue($initFilter->matches($stringForTrueCase));
-        $this->assertFalse($initFilter->matches($stringForFalseCase));
+        $this->assertTrue($stringFilter->matches($stringForTrueCase));
+        $this->assertFalse($stringFilter->matches($stringForFalseCase));
     }
 
-    public static function matchesDataProvider(): \Generator
+    public static function matchesDataProvider(): Generator
     {
         yield "test match equals" => [
             'stringForTrueCase' => 'test theme 1',

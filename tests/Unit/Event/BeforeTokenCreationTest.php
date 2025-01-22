@@ -21,22 +21,22 @@ class BeforeTokenCreationTest extends BaseTestCase
         $userId = 'user-id';
 
         $builderMock = $this->getMockBuilder(Builder::class)->getMock();
-        $event = new BeforeTokenCreation(
+        $beforeTokenCreation = new BeforeTokenCreation(
             $builderMock,
             new User($this->getUserModelStub($userId))
         );
 
         $this->assertInstanceOf(
             Builder::class,
-            $event->getBuilder()
+            $beforeTokenCreation->getBuilder()
         );
         $this->assertInstanceOf(
             User::class,
-            $event->getUser()
+            $beforeTokenCreation->getUser()
         );
         $this->assertSame(
             $userId,
-            $event->getUser()->id()->val()
+            $beforeTokenCreation->getUser()->id()->val()
         );
     }
 }

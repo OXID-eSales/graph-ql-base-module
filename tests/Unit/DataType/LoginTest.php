@@ -24,12 +24,12 @@ class LoginTest extends TestCase
             'toString' => $accessTokenContent = uniqid()
         ]);
 
-        $sut = new Login(
+        $login = new Login(
             refreshToken: $refreshToken,
             accessToken: $accessToken
         );
 
-        $this->assertSame($refreshToken, $sut->refreshToken());
-        $this->assertSame($accessTokenContent, $sut->accessToken());
+        $this->assertSame($refreshToken, $login->refreshToken());
+        $this->assertSame($accessTokenContent, $login->accessToken());
     }
 }

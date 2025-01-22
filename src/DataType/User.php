@@ -23,14 +23,14 @@ final class User implements ShopModelAwareInterface, UserInterface
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag) TODO: Consider extracting AnonymousUser class
      */
     public function __construct(
-        private readonly EshopUserModel $userModel,
+        private readonly EshopUserModel $eshopUserModel,
         private readonly bool $isAnonymous = false
     ) {
     }
 
     public function getEshopModel(): EshopUserModel
     {
-        return $this->userModel;
+        return $this->eshopUserModel;
     }
 
     /**
@@ -39,7 +39,7 @@ final class User implements ShopModelAwareInterface, UserInterface
      */
     public function email(): string
     {
-        return (string)$this->userModel->getRawFieldData('oxusername');
+        return (string)$this->eshopUserModel->getRawFieldData('oxusername');
     }
 
     /**
@@ -49,7 +49,7 @@ final class User implements ShopModelAwareInterface, UserInterface
      */
     public function id(): ID
     {
-        return new ID((string)$this->userModel->getId());
+        return new ID((string)$this->eshopUserModel->getId());
     }
 
     public function isAnonymous(): bool

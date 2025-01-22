@@ -20,10 +20,10 @@ abstract class AbstractNumberFilter
     abstract public function greaterThan(): mixed;
     abstract public function between(): ?array;
 
-    public function addToQuery(QueryBuilder $builder, string $field): void
+    public function addToQuery(QueryBuilder $queryBuilder, string $field): void
     {
         /** @var array $from */
-        $from = $builder->getQueryPart('from');
+        $from = $queryBuilder->getQueryPart('from');
 
         if ($from === []) {
             throw new InvalidArgumentException('QueryBuilder is missing "from" SQL part');
@@ -31,25 +31,25 @@ abstract class AbstractNumberFilter
         $table = $from[0]['alias'] ?? $from[0]['table'];
 
         if ($this->equals()) {
-            $builder->andWhere(sprintf('%s.%s = :%s_eq', $table, strtoupper($field), $field))
+            $queryBuilder->andWhere(sprintf('%s.%s = :%s_eq', $table, strtoupper($field), $field))
                 ->setParameter(':' . $field . '_eq', $this->equals());
             // if equals is set, then no other conditions may apply
             return;
         }
 
         if ($this->lessThan()) {
-            $builder->andWhere(sprintf('%s.%s < :%s_lt', $table, strtoupper($field), $field))
+            $queryBuilder->andWhere(sprintf('%s.%s < :%s_lt', $table, strtoupper($field), $field))
                 ->setParameter(':' . $field . '_lt', $this->lessThan());
         }
 
         if ($this->greaterThan()) {
-            $builder->andWhere(sprintf('%s.%s > :%s_gt', $table, strtoupper($field), $field))
+            $queryBuilder->andWhere(sprintf('%s.%s > :%s_gt', $table, strtoupper($field), $field))
                 ->setParameter(':' . $field . '_gt', $this->greaterThan());
         }
 
         if ($this->between()) {
             $where = sprintf('%s.%s BETWEEN :%s_less AND :%s_upper', $table, strtoupper($field), $field, $field);
-            $builder->andWhere($where)
+            $queryBuilder->andWhere($where)
                 ->setParameter(':' . $field . '_less', $this->between()[0])
                 ->setParameter(':' . $field . '_upper', $this->between()[1]);
         }

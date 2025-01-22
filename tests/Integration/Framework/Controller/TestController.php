@@ -97,15 +97,15 @@ class TestController
     /**
      * @Query
      */
-    public function basicInputFilterQuery(TestFilter $filter): string
+    public function basicInputFilterQuery(TestFilter $testFilter): string
     {
-        return (string)$filter;
+        return (string)$testFilter;
     }
 
     /**
      * @Query
      */
-    public function basicSortingQuery(?TestSorting $sort = null): bool
+    public function basicSortingQuery(?TestSorting $testSorting = null): bool
     {
         return true;
     }
@@ -127,8 +127,8 @@ class TestController
     /**
      * @Mutation
      */
-    public function uploadedFileContent(UploadedFileInterface $file): string
+    public function uploadedFileContent(UploadedFileInterface $uploadedFile): string
     {
-        return file_get_contents($file->getStream()->getMetadata('uri'));
+        return file_get_contents($uploadedFile->getStream()->getMetadata('uri'));
     }
 }

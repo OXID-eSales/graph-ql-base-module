@@ -17,9 +17,9 @@ class TimerHandlerTest extends TestCase
 {
     public function testTimerHandler(): void
     {
-        $handler = new TimerHandler();
+        $timerHandler = new TimerHandler();
 
-        $this->assertEquals(Timer::class, get_class($handler->create('test')));
-        $this->assertTrue(is_array($handler->getTimers()));
+        $this->assertEquals(Timer::class, get_class($timerHandler->create('test')));
+        $this->assertTrue(is_array($timerHandler->getTimers()));
     }
 }

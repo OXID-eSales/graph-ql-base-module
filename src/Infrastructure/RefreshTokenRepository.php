@@ -23,26 +23,26 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
 {
     public function __construct(
         private QueryBuilderFactoryInterface $queryBuilderFactory,
-        private Legacy $legacyInfrastructure,
+        private Legacy $legacy,
         private RefreshTokenModelFactoryInterface $refreshTokenModelFactory,
     ) {
     }
 
     public function getNewRefreshToken(string $userId, string $lifeTime): RefreshTokenInterface
     {
-        $model = $this->refreshTokenModelFactory->create();
+        $refreshToken = $this->refreshTokenModelFactory->create();
 
-        $model->assign([
-            'OXID' => $this->legacyInfrastructure->createUniqueIdentifier(),
-            'OXSHOPID' => $this->legacyInfrastructure->getShopId(),
+        $refreshToken->assign([
+            'OXID' => $this->legacy->createUniqueIdentifier(),
+            'OXSHOPID' => $this->legacy->getShopId(),
             'OXUSERID' => $userId,
             'ISSUED_AT' => (new DateTimeImmutable('now'))->format('Y-m-d H:i:s'),
             'EXPIRES_AT' => (new DateTimeImmutable($lifeTime))->format('Y-m-d H:i:s'),
             'TOKEN' => substr(bin2hex(random_bytes(128)), 0, 255),
         ]);
-        $model->save();
+        $refreshToken->save();
 
-        return new RefreshTokenDataType($model);
+        return new RefreshTokenDataType($refreshToken);
     }
 
     public function removeExpiredTokens(): void
@@ -78,7 +78,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     {
         $userId = $this->getTokenUserId($refreshToken);
 
-        $userModel = $this->legacyInfrastructure->getUserModel($userId);
+        $userModel = $this->legacy->getUserModel($userId);
         $isAnonymous = !$userModel->getId();
 
         if ($isAnonymous) {

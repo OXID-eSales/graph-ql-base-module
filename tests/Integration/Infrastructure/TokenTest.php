@@ -19,7 +19,6 @@ use OxidEsales\GraphQL\Base\DataType\Token as TokenDataType;
 use OxidEsales\GraphQL\Base\DataType\User as UserDataType;
 use OxidEsales\GraphQL\Base\Infrastructure\Model\Token as TokenModel;
 use OxidEsales\GraphQL\Base\Infrastructure\Token as TokenInfrastructure;
-use OxidEsales\GraphQL\Base\Service\Token;
 use OxidEsales\GraphQL\Base\Service\Token as TokenService;
 
 class TokenTest extends IntegrationTestCase
@@ -34,10 +33,10 @@ class TokenTest extends IntegrationTestCase
     public function setUp(): void
     {
         parent::setUp();
-        $containerFactory = new TestContainerFactory();
-        $container = $containerFactory->create();
-        $container->compile();
-        $this->tokenInfrastructure = $container->get(TokenInfrastructure::class);
+        $testContainerFactory = new TestContainerFactory();
+        $containerBuilder = $testContainerFactory->create();
+        $containerBuilder->compile();
+        $this->tokenInfrastructure = $containerBuilder->get(TokenInfrastructure::class);
     }
 
     public function testRegisterToken(): void
@@ -267,23 +266,23 @@ class TokenTest extends IntegrationTestCase
         $tokenModel->save();
         $tokenModel->load('_testId');
 
-        $tokenDataType = new TokenDataType($tokenModel);
+        $token = new TokenDataType($tokenModel);
 
-        $this->assertSame($tokenModel, $tokenDataType->getEshopModel());
+        $this->assertSame($tokenModel, $token->getEshopModel());
         $this->assertSame(TokenModel::class, TokenDataType::getModelClass());
-        $this->assertSame($tokenModel->getRawFieldData('oxid'), $tokenDataType->id()->val());
-        $this->assertSame($tokenModel->getRawFieldData('token'), $tokenDataType->token());
+        $this->assertSame($tokenModel->getRawFieldData('oxid'), $token->id()->val());
+        $this->assertSame($tokenModel->getRawFieldData('token'), $token->token());
         $this->assertSame(
             $tokenModel->getRawFieldData('issued_at'),
-            $tokenDataType->createdAt()->format('Y-m-d H:i:s')
+            $token->createdAt()->format('Y-m-d H:i:s')
         );
         $this->assertSame(
             $tokenModel->getRawFieldData('expires_at'),
-            $tokenDataType->expiresAt()->format('Y-m-d H:i:s')
+            $token->expiresAt()->format('Y-m-d H:i:s')
         );
-        $this->assertSame($tokenModel->getRawFieldData('useragent'), $tokenDataType->userAgent());
-        $this->assertSame($tokenModel->getRawFieldData('oxshopid'), $tokenDataType->shopId()->val());
-        $this->assertSame($tokenModel->getRawFieldData('oxuserid'), $tokenDataType->customerId()->val());
+        $this->assertSame($tokenModel->getRawFieldData('useragent'), $token->userAgent());
+        $this->assertSame($tokenModel->getRawFieldData('oxshopid'), $token->shopId()->val());
+        $this->assertSame($tokenModel->getRawFieldData('oxuserid'), $token->customerId()->val());
     }
 
     public function testUserHasToken(): void
@@ -363,7 +362,7 @@ class TokenTest extends IntegrationTestCase
         string $tokenId = self::TEST_TOKEN_ID,
         string $userId = self::TEST_USER_ID
     ): UnencryptedToken {
-        $claims = new DataSet(
+        $dataSet = new DataSet(
             [
                 TokenService::CLAIM_TOKENID => $tokenId,
                 TokenService::CLAIM_SHOPID => 1,
@@ -374,7 +373,7 @@ class TokenTest extends IntegrationTestCase
 
         $token = $this->getMockBuilder(UnencryptedToken::class)
             ->getMock();
-        $token->method('claims')->willReturn($claims);
+        $token->method('claims')->willReturn($dataSet);
         $token->method('toString')->willReturn('here_is_the_string_token');
 
         return $token;

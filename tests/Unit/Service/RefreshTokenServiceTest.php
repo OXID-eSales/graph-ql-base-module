@@ -27,7 +27,7 @@ class RefreshTokenServiceTest extends TestCase
 {
     public function testRefreshTokenMethodGeneratesNewTokenByRefreshToken(): void
     {
-        $sut = $this->getSut(
+        $refreshTokenService = $this->getSut(
             refreshTokRepo: $repositoryMock = $this->createMock(RefreshTokenRepositoryInterface::class),
             tokenService: $tokenServiceMock = $this->createMock(TokenService::class)
         );
@@ -44,12 +44,12 @@ class RefreshTokenServiceTest extends TestCase
             ])
         );
 
-        $this->assertSame($tokenValue, $sut->refreshToken($refreshToken, uniqid()));
+        $this->assertSame($tokenValue, $refreshTokenService->refreshToken($refreshToken, uniqid()));
     }
 
     public function testRefreshTokenMethodTriggersTokenValidation(): void
     {
-        $sut = $this->getSut(
+        $refreshTokenService = $this->getSut(
             fingerprintService: $fingerprintServiceSpy = $this->createMock(FingerprintServiceInterface::class),
         );
 
@@ -58,23 +58,23 @@ class RefreshTokenServiceTest extends TestCase
         $fingerprintServiceSpy->expects($this->once())
             ->method('validateFingerprintHashToCookie')->with($fingerprintHash);
 
-        $sut->refreshToken(uniqid(), $fingerprintHash);
+        $refreshTokenService->refreshToken(uniqid(), $fingerprintHash);
     }
 
     public function testCreateRefreshTokenForUserTriggersExpiredTokensRemoval(): void
     {
-        $sut = $this->getSut(
+        $refreshTokenService = $this->getSut(
             refreshTokRepo: $repositorySpy = $this->createMock(RefreshTokenRepositoryInterface::class),
         );
 
         $repositorySpy->expects($this->once())->method('removeExpiredTokens');
 
-        $sut->createRefreshTokenForUser($this->createStub(UserInterface::class));
+        $refreshTokenService->createRefreshTokenForUser($this->createStub(UserInterface::class));
     }
 
     public function testCreateRefreshReturnsRepositoryCreatedTokenValue(): void
     {
-        $sut = $this->getSut(
+        $refreshTokenService = $this->getSut(
             refreshTokRepo: $repositoryMock = $this->createMock(RefreshTokenRepositoryInterface::class),
             moduleConfiguration: $this->createConfiguredStub(ModuleConfiguration::class, [
                 'getRefreshTokenLifeTime' => $lifetime = uniqid()
@@ -90,17 +90,17 @@ class RefreshTokenServiceTest extends TestCase
             ])
         );
 
-        $this->assertSame($newToken, $sut->createRefreshTokenForUser($userStub));
+        $this->assertSame($newToken, $refreshTokenService->createRefreshTokenForUser($userStub));
     }
 
     public function getSut(
-        RefreshTokenRepositoryInterface $refreshTokRepo = null,
+        RefreshTokenRepositoryInterface $refreshTokenRepository = null,
         ModuleConfiguration $moduleConfiguration = null,
         TokenService $tokenService = null,
         FingerprintServiceInterface $fingerprintService = null,
     ): RefreshTokenServiceInterface {
         return new RefreshTokenService(
-            refreshTokenRepository: $refreshTokRepo ?? $this->createStub(RefreshTokenRepositoryInterface::class),
+            refreshTokenRepository: $refreshTokenRepository ?? $this->createStub(RefreshTokenRepositoryInterface::class),
             moduleConfiguration: $moduleConfiguration ?? $this->createStub(ModuleConfiguration::class),
             tokenService: $tokenService ?? $this->createStub(TokenService::class),
             fingerprintService: $fingerprintService ?? $this->createStub(FingerprintServiceInterface::class),

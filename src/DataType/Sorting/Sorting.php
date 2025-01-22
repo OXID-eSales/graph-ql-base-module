@@ -39,10 +39,10 @@ abstract class Sorting
         }
     }
 
-    public function addToQuery(QueryBuilder $builder): void
+    public function addToQuery(QueryBuilder $queryBuilder): void
     {
         /** @var array $from */
-        $from = $builder->getQueryPart('from');
+        $from = $queryBuilder->getQueryPart('from');
 
         if ($from === []) {
             throw new InvalidArgumentException('QueryBuilder is missing "from" SQL part');
@@ -50,7 +50,7 @@ abstract class Sorting
         $table = $from[0]['alias'] ?? $from[0]['table'];
 
         foreach ($this->sorting as $field => $dir) {
-            $builder->addOrderBy($table . '.' . $field, $dir);
+            $queryBuilder->addOrderBy($table . '.' . $field, $dir);
         }
     }
 }

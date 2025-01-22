@@ -22,9 +22,9 @@ class BeforeTokenCreationSubscriber implements EventSubscriberInterface
     ) {
     }
 
-    public function handle(BeforeTokenCreation $event): BeforeTokenCreation
+    public function handle(BeforeTokenCreation $beforeTokenCreation): BeforeTokenCreation
     {
-        $builder = $event->getBuilder();
+        $builder = $beforeTokenCreation->getBuilder();
         $fingerprint = $this->fingerprintService->getFingerprint();
 
         $builder->withClaim(
@@ -34,7 +34,7 @@ class BeforeTokenCreationSubscriber implements EventSubscriberInterface
 
         $this->cookieService->setFingerprintCookie($fingerprint);
 
-        return $event;
+        return $beforeTokenCreation;
     }
 
     public static function getSubscribedEvents(): array

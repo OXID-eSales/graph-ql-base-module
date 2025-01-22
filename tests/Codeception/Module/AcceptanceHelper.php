@@ -9,10 +9,10 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Tests\Codeception\Module;
 
+use Codeception\Util\HttpCode;
 use Codeception\Lib\Interfaces\DependsOnModule;
 use Codeception\Module;
 use Codeception\Module\REST;
-use Exception;
 use InvalidArgumentException;
 use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Token;
@@ -76,7 +76,7 @@ class AcceptanceHelper extends Module implements DependsOnModule
         ];
 
         $this->sendGQLQuery($query, $variables, 0, $shopId);
-        $this->rest->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
+        $this->rest->seeResponseCodeIs(HttpCode::OK);
         $this->rest->seeResponseIsJson();
         $this->seeResponseContainsValidJWTToken();
 
@@ -120,8 +120,8 @@ class AcceptanceHelper extends Module implements DependsOnModule
 
         $sid = '';
 
-        foreach ($cookieHeaders as $value) {
-            preg_match('/^(sid=)([a-z0-9]*);/', $value, $matches);
+        foreach ($cookieHeaders as $cookieHeader) {
+            preg_match('/^(sid=)([a-z0-9]*);/', $cookieHeader, $matches);
 
             if (isset($matches[2])) {
                 $sid = $matches[2];

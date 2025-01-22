@@ -17,66 +17,66 @@ use OxidEsales\GraphQL\Base\Tests\Codeception\AcceptanceTester;
  */
 class GraphQLCest
 {
-    public function testLoginWithInvalidCredentials(AcceptanceTester $I): void
+    public function testLoginWithInvalidCredentials(AcceptanceTester $acceptanceTester): void
     {
-        $I->sendGQLQuery('query {token(username:"wrong", password:"wrong")}');
-        $I->seeResponseIsJson();
+        $acceptanceTester->sendGQLQuery('query {token(username:"wrong", password:"wrong")}');
+        $acceptanceTester->seeResponseIsJson();
 //        $I->seeResponseContains('{"category":"permissionerror"}');
-        $I->canSeeHttpHeader('Server-Timing');
-        $I->seeResponseContains('errors');
+        $acceptanceTester->canSeeHttpHeader('Server-Timing');
+        $acceptanceTester->seeResponseContains('errors');
 
-        $result = $I->grabJsonResponseAsArray();
-        $I->assertEquals('Username/password combination is invalid', $result['errors'][0]['message']);
+        $result = $acceptanceTester->grabJsonResponseAsArray();
+        $acceptanceTester->assertEquals('Username/password combination is invalid', $result['errors'][0]['message']);
     }
 
-    public function testLoginWithValidCredentials(AcceptanceTester $I): void
+    public function testLoginWithValidCredentials(AcceptanceTester $acceptanceTester): void
     {
-        $I->login('user@oxid-esales.com', 'useruser');
-        $I->canSeeHttpHeader('Server-Timing');
+        $acceptanceTester->login('user@oxid-esales.com', 'useruser');
+        $acceptanceTester->canSeeHttpHeader('Server-Timing');
     }
 
-    public function testQueryWithInvalidToken(AcceptanceTester $I): void
+    public function testQueryWithInvalidToken(AcceptanceTester $acceptanceTester): void
     {
-        $I->amBearerAuthenticated('invalid_token');
-        $I->sendGQLQuery('query {token(username:"admin", password:"admin")}');
-        $I->seeResponseIsJson();
-        $I->seeResponseContains('errors');
-        $I->seeResponseMatchesJsonType([
+        $acceptanceTester->amBearerAuthenticated('invalid_token');
+        $acceptanceTester->sendGQLQuery('query {token(username:"admin", password:"admin")}');
+        $acceptanceTester->seeResponseIsJson();
+        $acceptanceTester->seeResponseContains('errors');
+        $acceptanceTester->seeResponseMatchesJsonType([
             'errors' => [
                 [
                     'message' => 'string:=Unable to parse token',
                 ],
             ],
         ]);
-        $I->canSeeHttpHeader('WWW-Authenticate', 'Bearer');
-        $I->cantSeeHttpHeader('Server-Timing');
+        $acceptanceTester->canSeeHttpHeader('WWW-Authenticate', 'Bearer');
+        $acceptanceTester->cantSeeHttpHeader('Server-Timing');
     }
 
-    public function testQueryWithoutSkipSession(AcceptanceTester $I): void
+    public function testQueryWithoutSkipSession(AcceptanceTester $acceptanceTester): void
     {
         $uri = '/widget.php?cl=graphql&lang=0&shp=1';
 
-        $I->getRest()->haveHTTPHeader('Content-Type', 'application/json');
-        $I->getRest()->sendPOST($uri, [
+        $acceptanceTester->getRest()->haveHTTPHeader('Content-Type', 'application/json');
+        $acceptanceTester->getRest()->sendPOST($uri, [
             'query' => 'query {token(username:"admin", password:"admin")}',
             'variables' => [],
         ]);
 
-        $I->seeResponseIsJson();
-        $I->seeResponseContains('errors');
-        $I->seeResponseMatchesJsonType([
+        $acceptanceTester->seeResponseIsJson();
+        $acceptanceTester->seeResponseContains('errors');
+        $acceptanceTester->seeResponseMatchesJsonType([
             'errors' => [
                 [
                     'message' => 'string:=' . GraphQL::SESSION_ERROR_MESSAGE,
                 ],
             ],
         ]);
-        $I->cantSeeHttpHeader('Server-Timing');
+        $acceptanceTester->cantSeeHttpHeader('Server-Timing');
     }
 
-    public function testLoginAnonymousToken(AcceptanceTester $I): void
+    public function testLoginAnonymousToken(AcceptanceTester $acceptanceTester): void
     {
-        $I->login(null, null);
-        $I->canSeeHttpHeader('Server-Timing');
+        $acceptanceTester->login(null, null);
+        $acceptanceTester->canSeeHttpHeader('Server-Timing');
     }
 }

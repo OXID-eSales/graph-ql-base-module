@@ -17,22 +17,22 @@ final class InvalidTokenTest extends TestCase
 {
     public function testExceptionCategory(): void
     {
-        $invalidTokenException = new InvalidToken();
+        $invalidToken = new InvalidToken();
 
-        $this->assertSame(ErrorCategories::PERMISSIONERRORS, $invalidTokenException->getCategory());
+        $this->assertSame(ErrorCategories::PERMISSIONERRORS, $invalidToken->getCategory());
     }
 
     public function testIsClientSafe(): void
     {
-        $invalidTokenException = new InvalidToken();
+        $invalidToken = new InvalidToken();
 
-        $this->assertTrue($invalidTokenException->isClientSafe());
+        $this->assertTrue($invalidToken->isClientSafe());
     }
 
     public function testInvalidToken(): void
     {
-        $invalidTokenException = new InvalidToken();
+        $invalidToken = new InvalidToken();
 
-        $this->assertSame('The access token is invalid', $invalidTokenException->getMessage());
+        $this->assertSame('The access token is invalid', $invalidToken->getMessage());
     }
 }

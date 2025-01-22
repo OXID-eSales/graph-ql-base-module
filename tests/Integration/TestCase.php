@@ -9,14 +9,16 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Tests\Integration;
 
+use OxidEsales\Eshop\Core\Registry;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use OxidEsales\EshopCommunity\Internal\Transition\Utility\BasicContext;
+use Psr\Log\AbstractLogger;
 use DateTimeImmutable;
 use Lcobucci\JWT\UnencryptedToken;
-use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Core\Di\ContainerFacade;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\ConnectionFactoryInterface;
 use OxidEsales\EshopCommunity\Tests\Integration\IntegrationTestCase;
 use OxidEsales\EshopCommunity\Tests\TestContainerFactory;
-use OxidEsales\Facts\Facts;
 use OxidEsales\GraphQL\Base\DataType\UserInterface;
 use OxidEsales\GraphQL\Base\Framework\GraphQLQueryHandler;
 use OxidEsales\GraphQL\Base\Framework\RequestReader;
@@ -55,14 +57,14 @@ abstract class TestCase extends IntegrationTestCase
                 )
             );
 
-        \OxidEsales\Eshop\Core\Registry::getLang()->resetBaseLanguage();
+        Registry::getLang()->resetBaseLanguage();
 
         if (static::$container !== null) {
             return;
         }
 
-        $containerFactory = new TestContainerFactory();
-        static::$container = $containerFactory->create();
+        $testContainerFactory = new TestContainerFactory();
+        static::$container = $testContainerFactory->create();
 
         $responseWriterDefinition = static::$container->getDefinition(ResponseWriter::class);
         $responseWriterDefinition->setClass(ResponseWriterStub::class);
@@ -79,21 +81,21 @@ abstract class TestCase extends IntegrationTestCase
         $tokenInfrastructureDefinition = static::$container->getDefinition(TokenInfrastructure::class);
         $tokenInfrastructureDefinition->setClass(TokenInfrastructureStub::class);
 
-        $logger = new LoggerStub();
+        $loggerStub = new LoggerStub();
 
         static::$container->set(
             LoggerInterface::class,
-            $logger
+            $loggerStub
         );
         static::$container->autowire(
             LoggerInterface::class,
-            get_class($logger)
+            get_class($loggerStub)
         );
 
-        $cache = new \Symfony\Component\Cache\Adapter\ArrayAdapter();
+        $arrayAdapter = new ArrayAdapter();
         static::$container->set(
             'oxidesales.graphqlbase.cacheadapter',
-            $cache
+            $arrayAdapter
         );
         static::$container->setParameter(
             'oxid_esales.db.replicate',
@@ -200,8 +202,8 @@ abstract class TestCase extends IntegrationTestCase
         $boundary = '-------------' . uniqid();
         $postData = $this->buildFileUpload($boundary, $fields, $map, $files);
 
-        $facts = new Facts();
-        $ch = curl_init($facts->getShopUrl() . '/graphql?lang=0&shp=1');
+        $basicContext = new BasicContext();
+        $ch = curl_init($basicContext->getShopBaseUrl() . '/graphql?lang=0&shp=1');
 
         $headers = [
             'Connection: keep-alive',
@@ -334,7 +336,7 @@ class TokenInfrastructureStub extends TokenInfrastructure
         return false;
     }
 
-    public function registerToken(UnencryptedToken $token, DateTimeImmutable $time, DateTimeImmutable $expire): void
+    public function registerToken(UnencryptedToken $unencryptedToken, DateTimeImmutable $time, DateTimeImmutable $expire): void
     {
     }
 
@@ -351,7 +353,7 @@ class RequestReaderStub extends RequestReader
     }
 }
 
-class LoggerStub extends \Psr\Log\AbstractLogger
+class LoggerStub extends AbstractLogger
 {
     public function log($level, $message, array $context = []): void
     {
@@ -359,7 +361,7 @@ class LoggerStub extends \Psr\Log\AbstractLogger
     }
 }
 
-class ModuleConfigurationStub extends \OxidEsales\GraphQL\Base\Service\ModuleConfiguration
+class ModuleConfigurationStub extends ModuleConfiguration
 {
     public function __construct()
     {

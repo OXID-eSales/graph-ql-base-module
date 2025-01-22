@@ -28,30 +28,30 @@ class PaginationTest extends DataTypeTestCase
 
     public function testBasicPaginationFilter(): void
     {
-        $filter = Pagination::fromUserInput(
+        $pagination = Pagination::fromUserInput(
             1,
             2
         );
         $this->assertSame(
             1,
-            $filter->offset()
+            $pagination->offset()
         );
         $this->assertSame(
             2,
-            $filter->limit()
+            $pagination->limit()
         );
     }
 
     public function testDefaultNamedConstructor(): void
     {
-        $paging = Pagination::fromUserInput();
+        $pagination = Pagination::fromUserInput();
 
         $this->assertSame(
             0,
-            $paging->offset()
+            $pagination->offset()
         );
         $this->assertNull(
-            $paging->limit()
+            $pagination->limit()
         );
     }
 
@@ -65,9 +65,9 @@ class PaginationTest extends DataTypeTestCase
     {
         $this->expectExceptionMessage('PaginationFilter fields must be positive.');
 
-        $filter = Pagination::fromUserInput($offset, $limit);
-        $filter->offset();
-        $filter->limit();
+        $pagination = Pagination::fromUserInput($offset, $limit);
+        $pagination->offset();
+        $pagination->limit();
     }
 
     public static function paginationDataProvider(): array
@@ -86,9 +86,9 @@ class PaginationTest extends DataTypeTestCase
     public function testAddPaginationToQuery(int $offset, ?int $limit): void
     {
         $queryBuilder = $this->createQueryBuilderMock();
-        $filter = Pagination::fromUserInput($offset, $limit);
+        $pagination = Pagination::fromUserInput($offset, $limit);
 
-        $filter->addPaginationToQuery($queryBuilder);
+        $pagination->addPaginationToQuery($queryBuilder);
 
         $this->assertEquals($offset, $queryBuilder->getFirstResult());
         $this->assertEquals($limit, $queryBuilder->getMaxResults());

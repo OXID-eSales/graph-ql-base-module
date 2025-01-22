@@ -79,8 +79,8 @@ class AuthenticationTest extends BaseTestCase
      */
     public function testIsLoggedWithValidToken(string $username, string $password): void
     {
-        $token = $this->createToken($username, $password);
-        $authenticationService = $this->getSut($token);
+        $unencryptedToken = $this->createToken($username, $password);
+        $authenticationService = $this->getSut($unencryptedToken);
 
         $this->assertTrue($authenticationService->isLogged());
     }
@@ -117,8 +117,8 @@ class AuthenticationTest extends BaseTestCase
      */
     public function testGetUser($username, $password): void
     {
-        $token = $this->createToken($username, $password);
-        $authenticationService = $this->getSut($token);
+        $unencryptedToken = $this->createToken($username, $password);
+        $authenticationService = $this->getSut($unencryptedToken);
 
         $this->assertInstanceOf(User::class, $authenticationService->getUser());
     }
@@ -143,8 +143,8 @@ class AuthenticationTest extends BaseTestCase
             ->method('getShopId')
             ->willReturn(1);
 
-        $token = $this->tokenService->createToken($username, $password);
-        $authenticationService = $this->getSut($token);
+        $unencryptedToken = $this->tokenService->createToken($username, $password);
+        $authenticationService = $this->getSut($unencryptedToken);
 
         $this->assertEmpty($authenticationService->getUser()->email());
     }
@@ -157,8 +157,8 @@ class AuthenticationTest extends BaseTestCase
      */
     public function testGetUserNameWithValidCredentials($username, $password): void
     {
-        $token = $this->createToken($username, $password);
-        $authenticationService = $this->getSut($token);
+        $unencryptedToken = $this->createToken($username, $password);
+        $authenticationService = $this->getSut($unencryptedToken);
 
         $this->assertSame($username, $authenticationService->getUser()->email());
     }
@@ -177,8 +177,8 @@ class AuthenticationTest extends BaseTestCase
         $this->legacy->method('login')->willReturn(new User($userModel));
         $this->legacy->method('getUserModel')->with('the_admin_oxid')->willReturn($userModel);
 
-        $token = $this->tokenService->createToken('admin', 'admin');
-        $authenticationService = $this->getSut($token);
+        $unencryptedToken = $this->tokenService->createToken('admin', 'admin');
+        $authenticationService = $this->getSut($unencryptedToken);
 
         $this->assertSame('the_admin_oxid', $authenticationService->getUser()->id()->val());
         $this->assertNotNull($authenticationService->getUser()->email());
@@ -198,16 +198,16 @@ class AuthenticationTest extends BaseTestCase
 
     public function testGetUserIdForAnonymousToken(): void
     {
-        $someRandomModelStub = $this->getUserModelStub('someRandomId');
+        $user = $this->getUserModelStub('someRandomId');
 
         $this->legacy->method('login')->willReturn(
-            new User($someRandomModelStub, true)
+            new User($user, true)
         );
 
-        $this->legacy->method('getUserModel')->willReturn($someRandomModelStub);
+        $this->legacy->method('getUserModel')->willReturn($user);
 
-        $anonymousToken = $this->tokenService->createToken();
-        $authenticationService = $this->getSut($anonymousToken);
+        $unencryptedToken = $this->tokenService->createToken();
+        $authenticationService = $this->getSut($unencryptedToken);
 
         $this->assertNotEmpty($authenticationService->getUser()->id()->val());
     }
@@ -229,8 +229,8 @@ class AuthenticationTest extends BaseTestCase
             ->method('getUserGroupIds')
             ->willReturn(['oxidanonymous']);
 
-        $anonymousToken = $this->tokenService->createToken();
-        $authenticationService = $this->getSut($anonymousToken);
+        $unencryptedToken = $this->tokenService->createToken();
+        $authenticationService = $this->getSut($unencryptedToken);
 
         $this->assertFalse($authenticationService->isLogged());
     }
@@ -252,8 +252,8 @@ class AuthenticationTest extends BaseTestCase
             ->method('getUserGroupIds')
             ->willReturn(['oxidanonymous']);
 
-        $anonymousToken = $this->tokenService->createToken();
-        $authenticationService = $this->getSut($anonymousToken);
+        $unencryptedToken = $this->tokenService->createToken();
+        $authenticationService = $this->getSut($unencryptedToken);
 
         $this->assertTrue($authenticationService->getUser()->isAnonymous());
     }
@@ -263,8 +263,8 @@ class AuthenticationTest extends BaseTestCase
      */
     public function testLoggedUserIsNotAnonymous(string $username, string $password): void
     {
-        $token = $this->createToken($username, $password);
-        $authenticationService = $this->getSut($token);
+        $unencryptedToken = $this->createToken($username, $password);
+        $authenticationService = $this->getSut($unencryptedToken);
 
         $this->assertFalse($authenticationService->getUser()->isAnonymous());
     }
@@ -293,8 +293,8 @@ class AuthenticationTest extends BaseTestCase
             ->method('getShopId')
             ->willReturn(1);
 
-        $token = $this->tokenService->createToken($username, $password);
-        $authenticationService = $this->getSut($token);
+        $unencryptedToken = $this->tokenService->createToken($username, $password);
+        $authenticationService = $this->getSut($unencryptedToken);
 
         $this->assertFalse($authenticationService->getUser()->isAnonymous());
     }
@@ -316,8 +316,8 @@ class AuthenticationTest extends BaseTestCase
             ->method('getUserGroupIds')
             ->willReturn(['oxidanonymous']);
 
-        $anonymousToken = $this->tokenService->createToken();
-        $authenticationService = $this->getSut($anonymousToken);
+        $unencryptedToken = $this->tokenService->createToken();
+        $authenticationService = $this->getSut($unencryptedToken);
 
         $this->assertEmpty($authenticationService->getUser()->email());
     }
@@ -331,19 +331,19 @@ class AuthenticationTest extends BaseTestCase
         $this->legacy->method('getUserGroupIds')
             ->willReturn(['oxidanonymous']);
 
-        $token = $this->tokenService->createToken('admin', 'admin');
+        $unencryptedToken = $this->tokenService->createToken('admin', 'admin');
 
-        $authenticationService = $this->getSut($token);
+        $authenticationService = $this->getSut($unencryptedToken);
 
         $this->assertTrue($authenticationService->getUser()->isAnonymous());
     }
 
-    protected function getSut(?UnencryptedToken $token = null, ?string $lifetime = null): Authentication
+    protected function getSut(?UnencryptedToken $unencryptedToken = null, ?string $lifetime = null): Authentication
     {
         return new Authentication(
             $this->legacy,
             new TokenService(
-                $token,
+                $unencryptedToken,
                 $this->jwtConfigurationBuilder,
                 $this->legacy,
                 new EventDispatcher(),

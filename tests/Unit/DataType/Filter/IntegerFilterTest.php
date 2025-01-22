@@ -58,7 +58,7 @@ class IntegerFilterTest extends DataTypeTestCase
 
     public function testGivesParametersIfSet(): void
     {
-        $filter = IntegerFilter::fromUserInput(
+        $integerFilter = IntegerFilter::fromUserInput(
             5,
             10,
             1,
@@ -70,22 +70,22 @@ class IntegerFilterTest extends DataTypeTestCase
 
         $this->assertSame(
             5,
-            $filter->equals()
+            $integerFilter->equals()
         );
         $this->assertSame(
             10,
-            $filter->lessThan()
+            $integerFilter->lessThan()
         );
         $this->assertSame(
             1,
-            $filter->greaterThan()
+            $integerFilter->greaterThan()
         );
         $this->assertSame(
             [
                 0,
                 10,
             ],
-            $filter->between()
+            $integerFilter->between()
         );
     }
 
@@ -128,10 +128,10 @@ class IntegerFilterTest extends DataTypeTestCase
     public function testAddQueryPartWithNoFrom(): void
     {
         $queryBuilder = $this->createQueryBuilderMock();
-        $filter = IntegerFilter::fromUserInput(6088077);
+        $integerFilter = IntegerFilter::fromUserInput(6088077);
 
         $this->expectException(InvalidArgumentException::class);
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $integerFilter->addToQuery($queryBuilder, 'db_field');
     }
 
     public function testAddQueryPartEquals(): void
@@ -139,10 +139,10 @@ class IntegerFilterTest extends DataTypeTestCase
         $queryBuilder = $this->createQueryBuilderMock();
 
         $number = 6088077;
-        $filter = IntegerFilter::fromUserInput($number);
+        $integerFilter = IntegerFilter::fromUserInput($number);
 
         $queryBuilder->select()->from('db_table');
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $integerFilter->addToQuery($queryBuilder, 'db_field');
 
         /** @var CompositeExpression $where */
         $where = $queryBuilder->getQueryPart('where');
@@ -160,10 +160,10 @@ class IntegerFilterTest extends DataTypeTestCase
             6088077,
             346901,
         ];
-        $filter = IntegerFilter::fromUserInput(null, null, null, $numbers);
+        $integerFilter = IntegerFilter::fromUserInput(null, null, null, $numbers);
 
         $queryBuilder->select()->from('db_table');
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $integerFilter->addToQuery($queryBuilder, 'db_field');
 
         /** @var CompositeExpression $where */
         $where = $queryBuilder->getQueryPart('where');
@@ -180,10 +180,10 @@ class IntegerFilterTest extends DataTypeTestCase
     public function testAddQueryPartWithAlias(): void
     {
         $queryBuilder = $this->createQueryBuilderMock();
-        $filter = IntegerFilter::fromUserInput(6088077);
+        $integerFilter = IntegerFilter::fromUserInput(6088077);
 
         $queryBuilder->select()->from('db_table', 'db_table_alias');
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $integerFilter->addToQuery($queryBuilder, 'db_field');
 
         /** @var CompositeExpression $where */
         $where = $queryBuilder->getQueryPart('where');

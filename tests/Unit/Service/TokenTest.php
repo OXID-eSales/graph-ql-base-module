@@ -11,11 +11,9 @@ namespace OxidEsales\GraphQL\Base\Tests\Unit\Service;
 
 use Lcobucci\JWT\Token;
 use OxidEsales\GraphQL\Base\Exception\InvalidLogin;
-use OxidEsales\GraphQL\Base\Exception\InvalidToken;
 use OxidEsales\GraphQL\Base\Exception\TokenQuota;
 use OxidEsales\GraphQL\Base\Exception\UnknownToken;
 use OxidEsales\GraphQL\Base\Infrastructure\Legacy as LegacyService;
-use OxidEsales\GraphQL\Base\Infrastructure\RefreshTokenRepository;
 use OxidEsales\GraphQL\Base\Infrastructure\Token as TokenInfrastructure;
 use OxidEsales\GraphQL\Base\Service\Token as TokenService;
 use OxidEsales\GraphQL\Base\Tests\Unit\BaseTestCase;
@@ -42,9 +40,9 @@ class TokenTest extends BaseTestCase
         );
         $legacy->method('login')->willReturn($this->getUserDataStub($this->getUserModelStub('the_admin_oxid')));
 
-        $token = $this->getTokenService($legacy)->createToken('admin', 'admin');
+        $unencryptedToken = $this->getTokenService($legacy)->createToken('admin', 'admin');
 
-        $this->assertInstanceOf(Token::class, $token);
+        $this->assertInstanceOf(Token::class, $unencryptedToken);
     }
 
     public function testCreateTokenWithValidCredentialsForBlockedUser(): void
@@ -56,9 +54,9 @@ class TokenTest extends BaseTestCase
         $legacy->method('login')->willReturn($this->getUserDataStub($this->getUserModelStub('the_admin_oxid')));
         $legacy->method('getUserGroupIds')->willReturn(['foo', 'oxidblocked', 'bar']);
 
-        $token = $this->getTokenService($legacy)->createToken('admin', 'admin');
+        $unencryptedToken = $this->getTokenService($legacy)->createToken('admin', 'admin');
 
-        $this->assertInstanceOf(Token::class, $token);
+        $this->assertInstanceOf(Token::class, $unencryptedToken);
     }
 
     public function testCreateAnonymousToken(): void
@@ -69,10 +67,10 @@ class TokenTest extends BaseTestCase
         );
         $legacy->method('login')->willReturn($this->getUserDataStub($this->getUserModelStub()));
 
-        $anonymousToken = $this->getTokenService($legacy)->createToken();
+        $unencryptedToken = $this->getTokenService($legacy)->createToken();
 
-        $this->assertInstanceOf(Token::class, $anonymousToken);
-        $this->assertEmpty($anonymousToken->claims()->get(TokenService::CLAIM_USERNAME));
+        $this->assertInstanceOf(Token::class, $unencryptedToken);
+        $this->assertEmpty($unencryptedToken->claims()->get(TokenService::CLAIM_USERNAME));
     }
 
     public function testTokenQuotaExceeded(): void

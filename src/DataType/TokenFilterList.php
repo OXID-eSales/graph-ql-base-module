@@ -20,11 +20,11 @@ final class TokenFilterList implements FilterListInterface
     public function __construct(
         private readonly ?IDFilter $customerId = null,
         private readonly ?IDFilter $shopId = null,
-        private readonly ?DateFilter $expiresAt = null
+        private readonly ?DateFilter $dateFilter = null
     ) {
     }
 
-    public function withActiveFilter(?BoolFilter $active): self
+    public function withActiveFilter(?BoolFilter $boolFilter): self
     {
         return $this;
     }
@@ -39,9 +39,9 @@ final class TokenFilterList implements FilterListInterface
         return $this->customerId;
     }
 
-    public function withUserFilter(IDFilter $user): self
+    public function withUserFilter(IDFilter $idFilter): self
     {
-        return new self($user, $this->shopId, $this->expiresAt);
+        return new self($idFilter, $this->shopId, $this->dateFilter);
     }
 
     /**
@@ -56,7 +56,7 @@ final class TokenFilterList implements FilterListInterface
         return [
             'oxuserid' => $this->customerId,
             'oxshopid' => $this->shopId,
-            'expires_at' => $this->expiresAt,
+            'expires_at' => $this->dateFilter,
         ];
     }
 
@@ -66,8 +66,8 @@ final class TokenFilterList implements FilterListInterface
     public static function fromUserInput(
         ?IDFilter $customerId,
         ?IDFilter $shopId = null,
-        ?DateFilter $expiresAt = null
+        ?DateFilter $dateFilter = null
     ): self {
-        return new self($customerId, $shopId, $expiresAt);
+        return new self($customerId, $shopId, $dateFilter);
     }
 }

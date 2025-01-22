@@ -73,17 +73,17 @@ class LoginTest extends BaseTestCase
 
         $this->legacy->method('login')->with($username, $password)->willReturn($user);
 
-        $loginController = new Login(
+        $login = new Login(
             $this->tokenService,
             $this->getLoginService($this->legacy),
         );
 
-        $jwt = $loginController->token($username, $password);
-        $config = $this->jwtConfigurationBuilder->getConfiguration();
-        $token = $config->parser()->parse($jwt);
-        $validator = $config->validator();
+        $jwt = $login->token($username, $password);
+        $configuration = $this->jwtConfigurationBuilder->getConfiguration();
+        $token = $configuration->parser()->parse($jwt);
+        $validator = $configuration->validator();
 
-        $this->assertTrue($validator->validate($token, ...$config->validationConstraints()));
+        $this->assertTrue($validator->validate($token, ...$configuration->validationConstraints()));
         $this->assertEquals($user->id()->val(), $token->claims()->get(TokenService::CLAIM_USERID));
         $this->assertEquals($user->email(), $token->claims()->get(TokenService::CLAIM_USERNAME));
         $this->assertEquals(1, $token->claims()->get(TokenService::CLAIM_SHOPID));
@@ -96,17 +96,17 @@ class LoginTest extends BaseTestCase
             new User($this->getUserModelStub('someRandomId'), true)
         );
 
-        $loginController = new Login(
+        $login = new Login(
             $this->tokenService,
             $this->getLoginService($this->legacy),
         );
 
-        $jwt = $loginController->token('none');
-        $config = $this->jwtConfigurationBuilder->getConfiguration();
-        $token = $config->parser()->parse($jwt);
-        $validator = $config->validator();
+        $jwt = $login->token('none');
+        $configuration = $this->jwtConfigurationBuilder->getConfiguration();
+        $token = $configuration->parser()->parse($jwt);
+        $validator = $configuration->validator();
 
-        $this->assertTrue($validator->validate($token, ...$config->validationConstraints()));
+        $this->assertTrue($validator->validate($token, ...$configuration->validationConstraints()));
         $this->assertEquals(1, $token->claims()->get(TokenService::CLAIM_SHOPID));
         $this->assertNotEmpty($token->claims()->get(TokenService::CLAIM_USERID));
     }
@@ -124,17 +124,17 @@ class LoginTest extends BaseTestCase
             new User($this->getUserModelStub('someRandomId'), true)
         );
 
-        $loginController = new Login(
+        $login = new Login(
             $this->tokenService,
             $this->getLoginService($this->legacy),
         );
 
-        $jwt = $loginController->token(null, 'none');
-        $config = $this->jwtConfigurationBuilder->getConfiguration();
-        $token = $config->parser()->parse($jwt);
-        $validator = $config->validator();
+        $jwt = $login->token(null, 'none');
+        $configuration = $this->jwtConfigurationBuilder->getConfiguration();
+        $token = $configuration->parser()->parse($jwt);
+        $validator = $configuration->validator();
 
-        $this->assertTrue($validator->validate($token, ...$config->validationConstraints()));
+        $this->assertTrue($validator->validate($token, ...$configuration->validationConstraints()));
         $this->assertEquals($shop['id'], $token->claims()->get(TokenService::CLAIM_SHOPID));
         $this->assertNotEmpty($token->claims()->get(TokenService::CLAIM_USERID));
     }
@@ -152,24 +152,24 @@ class LoginTest extends BaseTestCase
             new User($this->getUserModelStub('someRandomId'), true)
         );
 
-        $loginController = new Login(
+        $login = new Login(
             $this->tokenService,
             $this->getLoginService($this->legacy),
         );
 
-        $jwt = $loginController->token();
-        $config = $this->jwtConfigurationBuilder->getConfiguration();
-        $token = $config->parser()->parse($jwt);
-        $validator = $config->validator();
+        $jwt = $login->token();
+        $configuration = $this->jwtConfigurationBuilder->getConfiguration();
+        $token = $configuration->parser()->parse($jwt);
+        $validator = $configuration->validator();
 
-        $this->assertTrue($validator->validate($token, ...$config->validationConstraints()));
+        $this->assertTrue($validator->validate($token, ...$configuration->validationConstraints()));
         $this->assertEquals($shop['id'], $token->claims()->get(TokenService::CLAIM_SHOPID));
         $this->assertNotEmpty($token->claims()->get(TokenService::CLAIM_USERID));
     }
 
     public function testLoginReturnsLoginServiceResult(): void
     {
-        $loginController = new Login(
+        $login = new Login(
             tokenService: $this->createStub(TokenService::class),
             loginService: $loginServiceMock = $this->createMock(LoginServiceInterface::class),
         );
@@ -180,6 +180,6 @@ class LoginTest extends BaseTestCase
         $loginDataTypeStub = $this->createStub(LoginInterface::class);
         $loginServiceMock->method('login')->with($userName, $password)->willReturn($loginDataTypeStub);
 
-        $this->assertSame($loginDataTypeStub, $loginController->login($userName, $password));
+        $this->assertSame($loginDataTypeStub, $login->login($userName, $password));
     }
 }

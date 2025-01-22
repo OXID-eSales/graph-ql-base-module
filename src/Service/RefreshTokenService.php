@@ -20,7 +20,7 @@ class RefreshTokenService implements RefreshTokenServiceInterface
     public function __construct(
         private readonly RefreshTokenRepositoryInterface $refreshTokenRepository,
         private readonly ModuleConfiguration $moduleConfiguration,
-        private readonly Token $tokenService,
+        private readonly Token $token,
         private readonly FingerprintServiceInterface $fingerprintService,
     ) {
     }
@@ -29,12 +29,12 @@ class RefreshTokenService implements RefreshTokenServiceInterface
     {
         $this->refreshTokenRepository->removeExpiredTokens();
 
-        $token = $this->refreshTokenRepository->getNewRefreshToken(
+        $refreshToken = $this->refreshTokenRepository->getNewRefreshToken(
             userId: (string)$user->id(),
             lifeTime: $this->moduleConfiguration->getRefreshTokenLifeTime()
         );
 
-        return $token->token();
+        return $refreshToken->token();
     }
 
     public function refreshToken(string $refreshToken, string $fingerprintHash): string
@@ -42,8 +42,8 @@ class RefreshTokenService implements RefreshTokenServiceInterface
         $this->fingerprintService->validateFingerprintHashToCookie($fingerprintHash);
 
         $user = $this->refreshTokenRepository->getTokenUser($refreshToken);
-        $newToken = $this->tokenService->createTokenForUser($user);
+        $unencryptedToken = $this->token->createTokenForUser($user);
 
-        return $newToken->toString();
+        return $unencryptedToken->toString();
     }
 }

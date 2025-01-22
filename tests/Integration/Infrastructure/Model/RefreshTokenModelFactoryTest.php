@@ -20,19 +20,19 @@ class RefreshTokenModelFactoryTest extends TestCase
 {
     public function testCreateProducesCorrectTypeOfObjects(): void
     {
-        $sut = $this->getSut();
+        $refreshTokenModelFactory = $this->getSut();
 
-        $this->assertInstanceOf(RefreshToken::class, $sut->create());
+        $this->assertInstanceOf(RefreshToken::class, $refreshTokenModelFactory->create());
     }
 
     public function testCreateProducesDifferentObjectsOnEveryCall(): void
     {
-        $sut = $this->getSut();
+        $refreshTokenModelFactory = $this->getSut();
 
-        $model1 = $sut->create();
-        $model2 = $sut->create();
+        $refreshToken = $refreshTokenModelFactory->create();
+        $model2 = $refreshTokenModelFactory->create();
 
-        $this->assertNotSame($model1, $model2);
+        $this->assertNotSame($refreshToken, $model2);
     }
 
     private function getSut(): RefreshTokenModelFactoryInterface

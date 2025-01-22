@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Tests\Integration\Infrastructure;
 
-use oxField;
 use OxidEsales\Eshop\Application\Model\User;
 use OxidEsales\EshopCommunity\Tests\TestContainerFactory;
 use OxidEsales\GraphQL\Base\DataType\User as UserDataType;
@@ -24,27 +23,27 @@ class LegacyTest extends TestCase
     private const ADMIN_PASSWORD = 'admin';
 
     /** @var Legacy */
-    private $legacyInfrastructure;
+    private $legacy;
 
     public function setUp(): void
     {
         parent::setUp();
-        $containerFactory = new TestContainerFactory();
-        $container = $containerFactory->create();
-        $container->compile();
-        $this->legacyInfrastructure = $container->get(Legacy::class);
+        $testContainerFactory = new TestContainerFactory();
+        $containerBuilder = $testContainerFactory->create();
+        $containerBuilder->compile();
+        $this->legacy = $containerBuilder->get(Legacy::class);
     }
 
     public function testValidLogin(): void
     {
-        $user = $this->legacyInfrastructure->login(self::ADMIN_LOGIN, self::ADMIN_PASSWORD);
+        $user = $this->legacy->login(self::ADMIN_LOGIN, self::ADMIN_PASSWORD);
         $this->assertSame($user::class, UserDataType::class);
     }
 
     public function testInvalidLogin(): void
     {
         $this->expectException(InvalidLogin::class);
-        $this->legacyInfrastructure->login(
+        $this->legacy->login(
             self::ADMIN_LOGIN,
             'wrongpassword'
         );
@@ -64,7 +63,7 @@ class LegacyTest extends TestCase
             $this->expectException(InvalidLogin::class);
         }
 
-        $userDataType = $this->legacyInfrastructure->login($login, $password);
+        $userDataType = $this->legacy->login($login, $password);
 
         $this->assertSame($expectedAnonymous, $userDataType->isAnonymous());
         $this->assertSame($expectedUserIdNull, null === $userDataType->id());
@@ -115,20 +114,20 @@ class LegacyTest extends TestCase
     {
         $user = oxNew(User::class);
 
-        $noUserGroups = $this->legacyInfrastructure->getUserGroupIds($user->getId());
+        $noUserGroups = $this->legacy->getUserGroupIds($user->getId());
         $this->assertSame([], $noUserGroups);
 
         $user->setId('_testUser');
         $user->setPassword('_testPassword');
         $user->assign(['oxusername' => '_testUsername']);
 
-        $anonymousUserGroup = $this->legacyInfrastructure->getUserGroupIds($user->getId());
+        $anonymousUserGroup = $this->legacy->getUserGroupIds($user->getId());
         $this->assertSame(['oxidanonymous'], $anonymousUserGroup);
 
         $groups = ['_testGroup', '_tempGroup'];
         $this->addToGroupsToUser($user, $groups);
 
-        $withUserGroups = $this->legacyInfrastructure->getUserGroupIds($user->getId());
+        $withUserGroups = $this->legacy->getUserGroupIds($user->getId());
         $this->assertCount(2, $withUserGroups);
         $this->assertEmpty(array_diff($groups, array_values($withUserGroups)));
 
@@ -136,7 +135,7 @@ class LegacyTest extends TestCase
         $this->addToGroupsToUser($user, $otherGroups);
 
         $allGroups = array_merge($groups, $otherGroups);
-        $allUserGroups = $this->legacyInfrastructure->getUserGroupIds($user->getId());
+        $allUserGroups = $this->legacy->getUserGroupIds($user->getId());
         $this->assertCount(5, $allUserGroups);
         $this->assertEmpty(array_diff($groups, array_values($allGroups)));
     }

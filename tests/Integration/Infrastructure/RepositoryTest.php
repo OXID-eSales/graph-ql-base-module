@@ -24,10 +24,10 @@ final class RepositoryTest extends TestCase
     public function testFatalErrorOnWrongClassById(): void
     {
         $this->expectException(\Error::class);
-        $repository = new Repository(
+        $infrastructureRepository = new Repository(
             $this->createMock(QueryBuilderFactoryInterface::class)
         );
-        $repository->getById(
+        $infrastructureRepository->getById(
             'foo',
             \stdClass::class
         );
@@ -36,10 +36,10 @@ final class RepositoryTest extends TestCase
     public function testExceptionOnWrongModelById(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $repository = new Repository(
+        $infrastructureRepository = new Repository(
             $this->createMock(QueryBuilderFactoryInterface::class)
         );
-        $repository->getById(
+        $infrastructureRepository->getById(
             'foo',
             WrongType::class
         );
@@ -48,10 +48,10 @@ final class RepositoryTest extends TestCase
     public function testExceptionOnWrongTypeById(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $repository = new Repository(
+        $infrastructureRepository = new Repository(
             $this->createMock(QueryBuilderFactoryInterface::class)
         );
-        $repository->getById(
+        $infrastructureRepository->getById(
             'foo',
             AlsoWrongType::class
         );
@@ -60,10 +60,10 @@ final class RepositoryTest extends TestCase
     public function testExceptionOnWrongModelByFilter(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $repository = new Repository(
+        $infrastructureRepository = new Repository(
             $this->createMock(QueryBuilderFactoryInterface::class)
         );
-        $repository->getList(
+        $infrastructureRepository->getList(
             WrongType::class,
             new EmptyFilterList(),
             new Pagination(),
@@ -74,15 +74,15 @@ final class RepositoryTest extends TestCase
     public function testExceptionOnFailToDeleteModel(): void
     {
         $this->expectException(\RuntimeException::class);
-        $repository = new Repository(
+        $infrastructureRepository = new Repository(
             $this->createMock(QueryBuilderFactoryInterface::class)
         );
-        $repository->delete(new CorrectModel());
+        $infrastructureRepository->delete(new CorrectModel());
     }
 
     public function testModelSave(): void
     {
-        $repository = new Repository(
+        $infrastructureRepository = new Repository(
             $this->createMock(QueryBuilderFactoryInterface::class)
         );
 
@@ -91,13 +91,13 @@ final class RepositoryTest extends TestCase
             ['save']
         );
         $model->expects($this->any())->method('save')->willReturn('someid');
-        $this->assertTrue($repository->saveModel($model));
+        $this->assertTrue($infrastructureRepository->saveModel($model));
     }
 
     public function testModelSaveFailed(): void
     {
         $this->expectException(\RuntimeException::class);
-        $repository = new Repository(
+        $infrastructureRepository = new Repository(
             $this->createMock(QueryBuilderFactoryInterface::class)
         );
 
@@ -106,7 +106,7 @@ final class RepositoryTest extends TestCase
             ['save']
         );
         $model->expects($this->any())->method('save')->willReturn(false);
-        $this->assertTrue($repository->saveModel($model));
+        $this->assertTrue($infrastructureRepository->saveModel($model));
     }
 }
 
@@ -123,7 +123,7 @@ final class EmptyFilterList implements \OxidEsales\GraphQL\Base\DataType\Filter\
         return [];
     }
 
-    public function withActiveFilter(?BoolFilter $active): self
+    public function withActiveFilter(?BoolFilter $boolFilter): self
     {
         return $this;
     }

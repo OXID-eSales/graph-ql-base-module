@@ -21,13 +21,13 @@ abstract class Error extends GraphQLError
     public function __construct(
         string $message,
         protected $code = 0,
-        ?Throwable $previous = null,
+        ?Throwable $throwable = null,
         protected string $category = 'Exception',
         array $extensions = []
     ) {
         parent::__construct(
             message: $message,
-            previous: $previous,
+            previous: $throwable,
             extensions: $extensions
         );
     }

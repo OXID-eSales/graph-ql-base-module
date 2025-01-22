@@ -21,16 +21,16 @@ class TestFilterFactory
      * @Factory
      */
     public static function createTestFilter(
-        ?BoolFilter $active = null,
-        ?FloatFilter $price = null,
-        ?IntegerFilter $stock = null,
-        ?StringFilter $title = null
+        ?BoolFilter $boolFilter = null,
+        ?FloatFilter $floatFilter = null,
+        ?IntegerFilter $integerFilter = null,
+        ?StringFilter $stringFilter = null
     ): TestFilter {
         return new TestFilter(
-            $active,
-            $price,
-            $stock,
-            $title
+            $boolFilter,
+            $floatFilter,
+            $integerFilter,
+            $stringFilter
         );
     }
 }

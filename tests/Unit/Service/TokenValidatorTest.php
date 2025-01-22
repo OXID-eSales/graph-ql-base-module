@@ -31,11 +31,11 @@ class TokenValidatorTest extends BaseTestCase
         $tokenInfrastructure->method('isTokenRegistered')->willReturn(true);
         $tokenInfrastructure->method('canIssueToken')->willReturn(true);
 
-        $token = $this->getTokenService($legacy, $tokenInfrastructure)->createToken('admin', 'admin');
+        $unencryptedToken = $this->getTokenService($legacy, $tokenInfrastructure)->createToken('admin', 'admin');
 
         // token is valid
         $validator = $this->getTokenValidator($legacy, $tokenInfrastructure);
-        $validator->validateToken($token);
+        $validator->validateToken($unencryptedToken);
 
         $legacy = $this->createPartialMock(LegacyService::class, ['getShopId', 'getShopUrl']);
         $legacy->method('getShopId')->willReturn(-1);
@@ -43,7 +43,7 @@ class TokenValidatorTest extends BaseTestCase
         // token is invalid
         $validator = $this->getTokenValidator($legacy, $tokenInfrastructure);
         $this->expectException(InvalidToken::class);
-        $validator->validateToken($token);
+        $validator->validateToken($unencryptedToken);
     }
 
     public function testTokenShopUrlValidation(): void
@@ -59,11 +59,11 @@ class TokenValidatorTest extends BaseTestCase
         $tokenInfrastructure->method('isTokenRegistered')->willReturn(true);
         $tokenInfrastructure->method('canIssueToken')->willReturn(true);
 
-        $token = $this->getTokenService($legacy, $tokenInfrastructure)->createToken('admin', 'admin');
+        $unencryptedToken = $this->getTokenService($legacy, $tokenInfrastructure)->createToken('admin', 'admin');
 
         // token is valid
         $validator = $this->getTokenValidator($legacy, $tokenInfrastructure);
-        $validator->validateToken($token);
+        $validator->validateToken($unencryptedToken);
 
         $legacy = $this->createPartialMock(LegacyService::class, ['getShopUrl', 'getShopId']);
         $legacy->method('getShopUrl')->willReturn('http://other.url');
@@ -71,7 +71,7 @@ class TokenValidatorTest extends BaseTestCase
         // token is invalid
         $validator = $this->getTokenValidator($legacy, $tokenInfrastructure);
         $this->expectException(InvalidToken::class);
-        $validator->validateToken($token);
+        $validator->validateToken($unencryptedToken);
     }
 
     public function testTokenUserInBlockedGroup(): void
@@ -90,11 +90,11 @@ class TokenValidatorTest extends BaseTestCase
         $tokenInfrastructure->method('isTokenRegistered')->willReturn(true);
         $tokenInfrastructure->method('canIssueToken')->willReturn(true);
 
-        $token = $this->getTokenService($legacy, $tokenInfrastructure)->createToken('admin', 'admin');
+        $unencryptedToken = $this->getTokenService($legacy, $tokenInfrastructure)->createToken('admin', 'admin');
 
-        $validator = $this->getTokenValidator($legacy, $tokenInfrastructure);
+        $tokenValidator = $this->getTokenValidator($legacy, $tokenInfrastructure);
         $this->expectException(TokenUserBlocked::class);
-        $validator->validateToken($token);
+        $tokenValidator->validateToken($unencryptedToken);
     }
 
     public function testExpiredToken(): void
@@ -113,14 +113,14 @@ class TokenValidatorTest extends BaseTestCase
         $tokenInfrastructure->method('isTokenRegistered')->willReturn(true);
         $tokenInfrastructure->method('canIssueToken')->willReturn(true);
 
-        $validator = $this->getTokenValidator($legacy, $tokenInfrastructure);
+        $tokenValidator = $this->getTokenValidator($legacy, $tokenInfrastructure);
 
         $token = $this->getTokenService($legacy, $tokenInfrastructure, null, '+1 hours')->createToken('admin', 'admin');
-        $validator->validateToken($token);
+        $tokenValidator->validateToken($token);
 
         $token = $this->getTokenService($legacy, $tokenInfrastructure, null, '-1 hours')->createToken('admin', 'admin');
         $this->expectException(InvalidToken::class);
-        $validator->validateToken($token);
+        $tokenValidator->validateToken($token);
     }
 
     public function testDeletedToken(): void
@@ -139,11 +139,11 @@ class TokenValidatorTest extends BaseTestCase
         $tokenInfrastructure->method('isTokenRegistered')->willReturn(false);
         $tokenInfrastructure->method('canIssueToken')->willReturn(true);
 
-        $validator = $this->getTokenValidator($legacy, $tokenInfrastructure);
+        $tokenValidator = $this->getTokenValidator($legacy, $tokenInfrastructure);
 
-        $token = $this->getTokenService($legacy, $tokenInfrastructure, null, '+1 hours')->createToken('admin', 'admin');
+        $unencryptedToken = $this->getTokenService($legacy, $tokenInfrastructure, null, '+1 hours')->createToken('admin', 'admin');
         $this->expectException(UnknownToken::class);
-        $validator->validateToken($token);
+        $tokenValidator->validateToken($unencryptedToken);
     }
 
     public function testAnonymousToken(): void
@@ -160,10 +160,10 @@ class TokenValidatorTest extends BaseTestCase
             ['registerToken', 'isTokenRegistered', 'isTokenExpired', 'removeExpiredTokens', 'canIssueToken']
         );
         $tokenInfrastructure->method('canIssueToken')->willReturn(true);
-        $validator = $this->getTokenValidator($legacy, $tokenInfrastructure);
+        $tokenValidator = $this->getTokenValidator($legacy, $tokenInfrastructure);
 
         // token is valid
-        $token = $this->getTokenService($legacy, $tokenInfrastructure, null, '+1 hours')->createToken();
-        $validator->validateToken($token);
+        $unencryptedToken = $this->getTokenService($legacy, $tokenInfrastructure, null, '+1 hours')->createToken();
+        $tokenValidator->validateToken($unencryptedToken);
     }
 }

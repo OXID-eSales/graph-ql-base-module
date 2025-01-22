@@ -19,19 +19,19 @@ use OxidEsales\GraphQL\Base\Infrastructure\Legacy;
 class LoginService implements LoginServiceInterface
 {
     public function __construct(
-        private readonly Legacy $legacyInfrastructure,
-        protected Token $tokenService,
+        private readonly Legacy $legacy,
+        protected Token $token,
         protected RefreshTokenServiceInterface $refreshTokenService,
     ) {
     }
 
     public function login(?string $userName, ?string $password): LoginInterface
     {
-        $user = $this->legacyInfrastructure->login($userName, $password);
+        $user = $this->legacy->login($userName, $password);
 
         return new LoginDatatype(
             refreshToken: $this->refreshTokenService->createRefreshTokenForUser($user),
-            accessToken: $this->tokenService->createTokenForUser($user),
+            accessToken: $this->token->createTokenForUser($user),
         );
     }
 }

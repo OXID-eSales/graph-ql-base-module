@@ -55,7 +55,7 @@ class SchemaFactory
             ->create('schema-gen')
             ->start();
 
-        $factory = new GraphQLiteSchemaFactory(
+        $schemaFactory = new GraphQLiteSchemaFactory(
             $this->cache,
             $this->container
         );
@@ -68,7 +68,7 @@ class SchemaFactory
                     $namespace,
                     $path
                 );
-                $factory->addControllerNameSpace($namespace);
+                $schemaFactory->addControllerNameSpace($namespace);
             }
 
             foreach ($namespaceMapper->getTypeNamespaceMapping() as $namespace => $path) {
@@ -76,16 +76,16 @@ class SchemaFactory
                     $namespace,
                     $path
                 );
-                $factory->addTypeNameSpace($namespace);
+                $schemaFactory->addTypeNameSpace($namespace);
             }
         }
 
-        $factory->setClassNameMapper($classNameMapper);
+        $schemaFactory->setClassNameMapper($classNameMapper);
 
-        $factory->setAuthenticationService($this->authentication)
+        $schemaFactory->setAuthenticationService($this->authentication)
             ->setAuthorizationService($this->authorization);
 
-        $this->schema = $factory->createSchema();
+        $this->schema = $schemaFactory->createSchema();
         $queryTimer->stop();
 
         return $this->schema;

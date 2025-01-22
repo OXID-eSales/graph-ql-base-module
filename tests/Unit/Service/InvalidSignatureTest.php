@@ -26,11 +26,11 @@ class InvalidSignatureTest extends BaseTestCase
     {
         $legacy = $this->createPartialMock(LegacyService::class, ['login', 'getShopId', 'getShopUrl']);
         $legacy->method('login')->willReturn($this->getUserDataStub($this->getUserModelStub('the_admin_oxid')));
-        $token = $this->getTokenService($legacy, null)->createToken('admin', 'admin');
+        $unencryptedToken = $this->getTokenService($legacy, null)->createToken('admin', 'admin');
 
-        $this->assertInstanceOf(Token::class, $token);
+        $this->assertInstanceOf(Token::class, $unencryptedToken);
 
-        $_SERVER['HTTP_AUTHORIZATION'] = 'Bearer ' . substr($token->toString(), 0, -10);
+        $_SERVER['HTTP_AUTHORIZATION'] = 'Bearer ' . substr($unencryptedToken->toString(), 0, -10);
 
         $requestReader = new RequestReader(
             $this->getTokenValidator($legacy),

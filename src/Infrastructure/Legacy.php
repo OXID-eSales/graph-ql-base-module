@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Infrastructure;
 
+use OxidEsales\EshopCommunity\Core\Di\ContainerFacade;
 use Exception;
 use OxidEsales\Eshop\Application\Model\User as UserModel;
 use OxidEsales\Eshop\Core\Email;
@@ -27,7 +28,7 @@ class Legacy
 {
     public function __construct(
         private readonly ContextInterface $context,
-        private readonly EhopEmailValidator $emailValidator
+        private readonly EhopEmailValidator $ehopEmailValidator
     ) {
     }
 
@@ -65,7 +66,7 @@ class Legacy
 
     public function getConfigParam(string $param): mixed
     {
-        return Registry::getConfig()->getConfigParam($param);
+        return ContainerFacade::getParameter($param);
     }
 
     public function getShopUrl(): string
@@ -91,7 +92,7 @@ class Legacy
 
     public function isValidEmail(string $email): bool
     {
-        return $this->emailValidator->isEmailValid($email);
+        return $this->ehopEmailValidator->isEmailValid($email);
     }
 
     public function getEmail(): Email
@@ -128,7 +129,7 @@ class Legacy
 
     public static function createUniqueIdentifier(): string
     {
-        $utils = Registry::getUtilsObject();
-        return $utils->generateUId();
+        $utilsObject = Registry::getUtilsObject();
+        return $utilsObject->generateUId();
     }
 }

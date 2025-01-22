@@ -29,17 +29,17 @@ class BoolFilter implements FilterInterface
         return $this->equals;
     }
 
-    public function addToQuery(QueryBuilder $builder, string $field): void
+    public function addToQuery(QueryBuilder $queryBuilder, string $field): void
     {
         /** @var array $from */
-        $from = $builder->getQueryPart('from');
+        $from = $queryBuilder->getQueryPart('from');
 
         if ($from === []) {
             throw new InvalidArgumentException('QueryBuilder is missing "from" SQL part');
         }
         $table = $from[0]['alias'] ?? $from[0]['table'];
 
-        $builder->andWhere(sprintf('%s.%s = :%s', $table, strtoupper($field), $field))
+        $queryBuilder->andWhere(sprintf('%s.%s = :%s', $table, strtoupper($field), $field))
             ->setParameter(':' . $field, $this->equals ? '1' : '0');
         // if equals is set, then no other conditions may apply
     }

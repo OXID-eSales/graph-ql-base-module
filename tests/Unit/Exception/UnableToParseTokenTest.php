@@ -17,22 +17,22 @@ final class UnableToParseTokenTest extends TestCase
 {
     public function testExceptionCategory(): void
     {
-        $invalidTokenException = new UnableToParseToken();
+        $unableToParseToken = new UnableToParseToken();
 
-        $this->assertSame(ErrorCategories::PERMISSIONERRORS, $invalidTokenException->getCategory());
+        $this->assertSame(ErrorCategories::PERMISSIONERRORS, $unableToParseToken->getCategory());
     }
 
     public function testIsClientSafe(): void
     {
-        $invalidTokenException = new UnableToParseToken();
+        $unableToParseToken = new UnableToParseToken();
 
-        $this->assertTrue($invalidTokenException->isClientSafe());
+        $this->assertTrue($unableToParseToken->isClientSafe());
     }
 
     public function testUnableToParse(): void
     {
-        $invalidTokenException = new UnableToParseToken();
+        $unableToParseToken = new UnableToParseToken();
 
-        $this->assertSame('Unable to parse token', $invalidTokenException->getMessage());
+        $this->assertSame('Unable to parse token', $unableToParseToken->getMessage());
     }
 }

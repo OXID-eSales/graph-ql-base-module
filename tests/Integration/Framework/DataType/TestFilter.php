@@ -25,15 +25,15 @@ class TestFilter
     private $title;
 
     public function __construct(
-        ?BoolFilter $active = null,
-        ?FloatFilter $price = null,
-        ?IntegerFilter $stock = null,
-        ?StringFilter $title = null
+        ?BoolFilter $boolFilter = null,
+        ?FloatFilter $floatFilter = null,
+        ?IntegerFilter $integerFilter = null,
+        ?StringFilter $stringFilter = null
     ) {
-        $this->active = $active;
-        $this->price = $price;
-        $this->stock = $stock;
-        $this->title = $title;
+        $this->active = $boolFilter;
+        $this->price = $floatFilter;
+        $this->stock = $integerFilter;
+        $this->title = $stringFilter;
     }
 
     public function __toString(): string

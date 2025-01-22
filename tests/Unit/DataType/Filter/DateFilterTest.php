@@ -116,20 +116,20 @@ class DateFilterTest extends DataTypeTestCase
     public function testAddQueryPartWithNoFrom(): void
     {
         $queryBuilder = $this->createQueryBuilderMock();
-        $filter = DateFilter::fromUserInput('2020-01-30 12:37:21');
+        $dateFilter = DateFilter::fromUserInput('2020-01-30 12:37:21');
 
         $this->expectException(InvalidArgumentException::class);
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $dateFilter->addToQuery($queryBuilder, 'db_field');
     }
 
     public function testAddQueryPartEquals(): void
     {
         $queryBuilder = $this->createQueryBuilderMock();
         $date = '2020-01-30 12:37:21';
-        $filter = DateFilter::fromUserInput($date);
+        $dateFilter = DateFilter::fromUserInput($date);
 
         $queryBuilder->select()->from('db_table');
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $dateFilter->addToQuery($queryBuilder, 'db_field');
 
         /** @var CompositeExpression $where */
         $where = $queryBuilder->getQueryPart('where');
@@ -147,10 +147,10 @@ class DateFilterTest extends DataTypeTestCase
             '2020-01-30 12:37:21',
             '2020-01-30 12:37:22',
         ];
-        $filter = DateFilter::fromUserInput(null, $dates);
+        $dateFilter = DateFilter::fromUserInput(null, $dates);
 
         $queryBuilder->select()->from('db_table');
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $dateFilter->addToQuery($queryBuilder, 'db_field');
 
         /** @var CompositeExpression $where */
         $where = $queryBuilder->getQueryPart('where');
@@ -167,10 +167,10 @@ class DateFilterTest extends DataTypeTestCase
     public function testAddQueryPartWithAlias(): void
     {
         $queryBuilder = $this->createQueryBuilderMock();
-        $filter = DateFilter::fromUserInput('2020-01-30 12:37:21');
+        $dateFilter = DateFilter::fromUserInput('2020-01-30 12:37:21');
 
         $queryBuilder->select()->from('db_table', 'db_table_alias');
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $dateFilter->addToQuery($queryBuilder, 'db_field');
 
         /** @var CompositeExpression $where */
         $where = $queryBuilder->getQueryPart('where');

@@ -9,9 +9,9 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Tests\Unit\Framework;
 
+use Laminas\Diactoros\UploadedFile;
 use GraphQL\Error\InvariantViolation;
 use Lcobucci\JWT\Token;
-use OxidEsales\GraphQL\Base\Exception\InvalidToken;
 use OxidEsales\GraphQL\Base\Exception\UnableToParseToken;
 use OxidEsales\GraphQL\Base\Framework\RequestReader;
 use OxidEsales\GraphQL\Base\Infrastructure\Legacy;
@@ -192,7 +192,7 @@ class RequestReaderTest extends BaseTestCase
             [
                 'query' => 'query anonymous {token}',
                 'variables' => [
-                    'file' => new \Laminas\Diactoros\UploadedFile(
+                    'file' => new UploadedFile(
                         './fixtures/example.txt',
                         18,
                         0,

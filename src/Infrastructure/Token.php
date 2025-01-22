@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Infrastructure;
 
+use Doctrine\DBAL\Driver\Statement;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Lcobucci\JWT\UnencryptedToken;
@@ -24,18 +25,18 @@ class Token
     ) {
     }
 
-    public function registerToken(UnencryptedToken $token, DateTimeImmutable $time, DateTimeImmutable $expire): void
+    public function registerToken(UnencryptedToken $unencryptedToken, DateTimeImmutable $time, DateTimeImmutable $expire): void
     {
         $storage = oxNew(Model\Token::class);
         $storage->assign(
             [
-                'OXID' => $token->claims()->get(TokenService::CLAIM_TOKENID),
-                'OXSHOPID' => $token->claims()->get(TokenService::CLAIM_SHOPID),
-                'OXUSERID' => $token->claims()->get(TokenService::CLAIM_USERID),
+                'OXID' => $unencryptedToken->claims()->get(TokenService::CLAIM_TOKENID),
+                'OXSHOPID' => $unencryptedToken->claims()->get(TokenService::CLAIM_SHOPID),
+                'OXUSERID' => $unencryptedToken->claims()->get(TokenService::CLAIM_USERID),
                 'ISSUED_AT' => $time->format('Y-m-d H:i:s'),
                 'EXPIRES_AT' => $expire->format('Y-m-d H:i:s'),
                 'USERAGENT' => $_SERVER['HTTP_USER_AGENT'] ?? '',
-                'TOKEN' => $token->toString(),
+                'TOKEN' => $unencryptedToken->toString(),
             ]
         );
         $storage->save();
@@ -84,7 +85,7 @@ class Token
 
     public function deleteOrphanedTokens(): void
     {
-        /** @var \Doctrine\DBAL\Driver\Statement $execute */
+        /** @var Statement $execute */
         $execute = $this->queryBuilderFactory->create()
             ->select('t.oxid')
             ->from('oegraphqltoken', 't')

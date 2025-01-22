@@ -18,37 +18,37 @@ use function strtoupper;
 
 class IDFilter implements FilterInterface
 {
-    public function __construct(private readonly ID $equals)
+    public function __construct(private readonly ID $id)
     {
     }
 
     public function equals(): ID
     {
-        return $this->equals;
+        return $this->id;
     }
 
-    public function addToQuery(QueryBuilder $builder, string $field): void
+    public function addToQuery(QueryBuilder $queryBuilder, string $field): void
     {
         /** @var array $from */
-        $from = $builder->getQueryPart('from');
+        $from = $queryBuilder->getQueryPart('from');
 
         if ($from === []) {
             throw new InvalidArgumentException('QueryBuilder is missing "from" SQL part');
         }
         $table = $from[0]['alias'] ?? $from[0]['table'];
 
-        $builder->andWhere(sprintf('%s.%s = :%s', $table, strtoupper($field), $field))
-            ->setParameter(':' . $field, $this->equals);
+        $queryBuilder->andWhere(sprintf('%s.%s = :%s', $table, strtoupper($field), $field))
+            ->setParameter(':' . $field, $this->id);
     }
 
     /**
      * @Factory(name="IDFilterInput", default=true)
      */
     public static function fromUserInput(
-        ID $equals
+        ID $id
     ): self {
         return new self(
-            $equals
+            $id
         );
     }
 }

@@ -17,11 +17,11 @@ final class InvalidArgumentTest extends TestCase
 {
     public function testExceptionCategory(): void
     {
-        $invalidArgumentException = new InvalidArgumentMultiplePossible('field', ['VALID', 'EQUALS'], 'INVALID_EQUALS');
+        $invalidArgumentMultiplePossible = new InvalidArgumentMultiplePossible('field', ['VALID', 'EQUALS'], 'INVALID_EQUALS');
 
-        $this->assertSame(ErrorCategories::REQUESTERROR, $invalidArgumentException->getCategory());
+        $this->assertSame(ErrorCategories::REQUESTERROR, $invalidArgumentMultiplePossible->getCategory());
         $this->assertSame(
-            $invalidArgumentException->getMessage(),
+            $invalidArgumentMultiplePossible->getMessage(),
             '"field" is only allowed to be one of "VALID, EQUALS", was "INVALID_EQUALS"'
         );
     }

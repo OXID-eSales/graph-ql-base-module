@@ -17,22 +17,22 @@ final class NotFoundTest extends TestCase
 {
     public function testExceptionCategory(): void
     {
-        $notFountException = new NotFound();
+        $notFound = new NotFound();
 
-        $this->assertSame(ErrorCategories::REQUESTERROR, $notFountException->getCategory());
+        $this->assertSame(ErrorCategories::REQUESTERROR, $notFound->getCategory());
     }
 
     public function testIsClientSafe(): void
     {
-        $notFountException = new NotFound();
+        $notFound = new NotFound();
 
-        $this->assertTrue($notFountException->isClientSafe());
+        $this->assertTrue($notFound->isClientSafe());
     }
 
     public function testNotFound(): void
     {
-        $notFountException = new NotFound();
+        $notFound = new NotFound();
 
-        $this->assertSame('Queried data was not found', $notFountException->getMessage());
+        $this->assertSame('Queried data was not found', $notFound->getMessage());
     }
 }

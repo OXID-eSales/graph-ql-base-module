@@ -20,8 +20,8 @@ class BeforeTokenCreationSubscriberTest extends TestCase
 {
     public function testSubscribedEventsConfiguration(): void
     {
-        $sut = $this->getSut();
-        $configuration = $sut->getSubscribedEvents();
+        $beforeTokenCreationSubscriber = $this->getSut();
+        $configuration = $beforeTokenCreationSubscriber->getSubscribedEvents();
 
         $this->assertTrue(array_key_exists(BeforeTokenCreation::class, $configuration));
         $this->assertTrue($configuration[BeforeTokenCreation::class] === 'handle');
@@ -29,15 +29,15 @@ class BeforeTokenCreationSubscriberTest extends TestCase
 
     public function testHandleReturnsOriginalEvent(): void
     {
-        $sut = $this->getSut();
+        $beforeTokenCreationSubscriber = $this->getSut();
 
         $eventStub = $this->createStub(BeforeTokenCreation::class);
-        $this->assertSame($eventStub, $sut->handle($eventStub));
+        $this->assertSame($eventStub, $beforeTokenCreationSubscriber->handle($eventStub));
     }
 
     public function testHandleConfiguresHookedJwtBuilderWithFingerprintHashClaim(): void
     {
-        $sut = $this->getSut(
+        $beforeTokenCreationSubscriber = $this->getSut(
             fingerprintService: $fingerprintServiceMock = $this->createMock(FingerprintServiceInterface::class)
         );
 
@@ -54,12 +54,12 @@ class BeforeTokenCreationSubscriberTest extends TestCase
         $jwtConfigBuilderSpy->expects($this->once())->method('withClaim')
             ->with(FingerprintServiceInterface::TOKEN_KEY, $exampleFingerprintHash);
 
-        $sut->handle($eventMock);
+        $beforeTokenCreationSubscriber->handle($eventMock);
     }
 
     public function testHandleTriggersFingerprintCookieSetup(): void
     {
-        $sut = $this->getSut(
+        $beforeTokenCreationSubscriber = $this->getSut(
             fingerprintService: $fingerprintServiceMock = $this->createMock(FingerprintServiceInterface::class),
             cookieService: $cookieServiceSpy = $this->createMock(CookieServiceInterface::class),
         );
@@ -74,7 +74,7 @@ class BeforeTokenCreationSubscriberTest extends TestCase
         $cookieServiceSpy->expects($this->once())->method('setFingerprintCookie')->with($exampleFingerprint);
 
         $eventStub = $this->createStub(BeforeTokenCreation::class);
-        $sut->handle($eventStub);
+        $beforeTokenCreationSubscriber->handle($eventStub);
     }
 
     public function getSut(

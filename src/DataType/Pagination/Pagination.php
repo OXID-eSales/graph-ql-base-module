@@ -40,12 +40,12 @@ final class Pagination
         return $this->limit;
     }
 
-    public function addPaginationToQuery(QueryBuilder $builder): void
+    public function addPaginationToQuery(QueryBuilder $queryBuilder): void
     {
-        $builder->setFirstResult($this->offset);
+        $queryBuilder->setFirstResult($this->offset);
 
         if ($this->limit > 0) {
-            $builder->setMaxResults($this->limit);
+            $queryBuilder->setMaxResults($this->limit);
         }
     }
 

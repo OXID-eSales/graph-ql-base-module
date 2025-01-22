@@ -11,7 +11,6 @@ namespace OxidEsales\GraphQL\Base\Tests\Unit\Event\Subscriber;
 
 use OxidEsales\Eshop\Application\Model\Article;
 use OxidEsales\Eshop\Application\Model\User;
-use OxidEsales\Eshop\Core\Model\BaseModel;
 use OxidEsales\EshopCommunity\Internal\Transition\ShopEvents\AfterModelUpdateEvent;
 use OxidEsales\EshopCommunity\Internal\Transition\ShopEvents\BeforeModelUpdateEvent;
 use OxidEsales\GraphQL\Base\Event\Subscriber\PasswordChangeSubscriber;
@@ -24,8 +23,8 @@ class PasswordChangeSubscriberTest extends BaseTestCase
 {
     public function testSubscribedEventsConfiguration(): void
     {
-        $sut = $this->getSut();
-        $configuration = $sut->getSubscribedEvents();
+        $passwordChangeSubscriber = $this->getSut();
+        $configuration = $passwordChangeSubscriber->getSubscribedEvents();
 
         $this->assertTrue(array_key_exists(BeforeModelUpdateEvent::class, $configuration));
         $this->assertTrue(array_key_exists(AfterModelUpdateEvent::class, $configuration));
@@ -51,9 +50,9 @@ class PasswordChangeSubscriberTest extends BaseTestCase
         $beforeUpdateStub = $this->createConfiguredStub(BeforeModelUpdateEvent::class, ['getModel' => $userModelStub]);
         $afterUpdateStub = $this->createConfiguredStub(AfterModelUpdateEvent::class, ['getModel' => $userModelStub]);
 
-        $sut = $this->getSut($userModelService, $refreshTokenRepository, $tokenInfrastructure);
-        $sut->handleBeforeUpdate($beforeUpdateStub);
-        $sut->handleAfterUpdate($afterUpdateStub);
+        $passwordChangeSubscriber = $this->getSut($userModelService, $refreshTokenRepository, $tokenInfrastructure);
+        $passwordChangeSubscriber->handleBeforeUpdate($beforeUpdateStub);
+        $passwordChangeSubscriber->handleAfterUpdate($afterUpdateStub);
     }
 
     public function testSubscriberWithMultipleUserModelsPwdChange(): void
@@ -93,11 +92,11 @@ class PasswordChangeSubscriberTest extends BaseTestCase
             ['getModel' => $userModelStub2]
         );
 
-        $sut = $this->getSut($userModelService, $refreshTokenRepository, $tokenInfrastructure);
-        $sut->handleBeforeUpdate($beforeUpdateStub1);
-        $sut->handleBeforeUpdate($beforeUpdateStub2);
-        $sut->handleAfterUpdate($afterUpdateStub1);
-        $sut->handleAfterUpdate($afterUpdateStub2);
+        $passwordChangeSubscriber = $this->getSut($userModelService, $refreshTokenRepository, $tokenInfrastructure);
+        $passwordChangeSubscriber->handleBeforeUpdate($beforeUpdateStub1);
+        $passwordChangeSubscriber->handleBeforeUpdate($beforeUpdateStub2);
+        $passwordChangeSubscriber->handleAfterUpdate($afterUpdateStub1);
+        $passwordChangeSubscriber->handleAfterUpdate($afterUpdateStub2);
 
         // Ensure that invalidateUserTokens was called with the correct parameters
         $this->assertCount(2, $methodArgs);
@@ -122,9 +121,9 @@ class PasswordChangeSubscriberTest extends BaseTestCase
         $beforeUpdateStub = $this->createConfiguredStub(BeforeModelUpdateEvent::class, ['getModel' => new Article()]);
         $afterUpdateStub = $this->createConfiguredStub(AfterModelUpdateEvent::class, ['getModel' => new Article()]);
 
-        $sut = $this->getSut($userModelService, $refreshTokenRepository, $tokenInfrastructure);
-        $sut->handleBeforeUpdate($beforeUpdateStub);
-        $sut->handleAfterUpdate($afterUpdateStub);
+        $passwordChangeSubscriber = $this->getSut($userModelService, $refreshTokenRepository, $tokenInfrastructure);
+        $passwordChangeSubscriber->handleBeforeUpdate($beforeUpdateStub);
+        $passwordChangeSubscriber->handleAfterUpdate($afterUpdateStub);
     }
 
     public function testSubscriberWithUserModelNoPwdChanged(): void
@@ -144,21 +143,21 @@ class PasswordChangeSubscriberTest extends BaseTestCase
         $beforeUpdateStub = $this->createConfiguredStub(BeforeModelUpdateEvent::class, ['getModel' => $userModelStub]);
         $afterUpdateStub = $this->createConfiguredStub(AfterModelUpdateEvent::class, ['getModel' => $userModelStub]);
 
-        $sut = $this->getSut($userModelService, $refreshTokenRepository, $tokenInfrastructure);
-        $sut->handleBeforeUpdate($beforeUpdateStub);
-        $sut->handleAfterUpdate($afterUpdateStub);
+        $passwordChangeSubscriber = $this->getSut($userModelService, $refreshTokenRepository, $tokenInfrastructure);
+        $passwordChangeSubscriber->handleBeforeUpdate($beforeUpdateStub);
+        $passwordChangeSubscriber->handleAfterUpdate($afterUpdateStub);
     }
 
     protected function getSut(
         UserModelService $userModelService = null,
         RefreshTokenRepositoryInterface $refreshTokenRepository = null,
-        Token $tokenInfrastructure = null,
+        Token $token = null,
     ): PasswordChangeSubscriber {
         return new PasswordChangeSubscriber(
             userModelService: $userModelService ?? $this->createStub(UserModelService::class),
             refreshTokenRepository:
                 $refreshTokenRepository ?? $this->createStub(RefreshTokenRepositoryInterface::class),
-            tokenInfrastructure: $tokenInfrastructure ?? $this->createStub(Token::class)
+            tokenInfrastructure: $token ?? $this->createStub(Token::class)
         );
     }
 }

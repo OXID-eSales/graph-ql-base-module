@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Framework;
 
-use GraphQL\Error\DebugFlag;
+use Closure;
 use GraphQL\Error\Error;
 use GraphQL\Error\FormattedError;
 use GraphQL\Executor\ExecutionResult;
@@ -33,12 +33,12 @@ class GraphQLQueryHandler
 
     public function executeGraphQLQuery(): void
     {
-        $result = $this->executeQuery(
+        $executionResult = $this->executeQuery(
             $this->requestReader->getGraphQLRequestData()
         );
-        $result->setErrorFormatter($this->getErrorFormatter());
+        $executionResult->setErrorFormatter($this->getErrorFormatter());
         $this->responseWriter->renderJsonResponse(
-            $result->toArray()
+            $executionResult->toArray()
         );
     }
 
@@ -67,7 +67,7 @@ class GraphQLQueryHandler
 
         $queryTimer = $this->timerHandler->create('query-exec')->start();
 
-        $result = $graphQL->executeQuery(
+        $executionResult = $graphQL->executeQuery(
             $schema,
             $queryData['query'],
             null,
@@ -76,14 +76,14 @@ class GraphQLQueryHandler
             $operationName
         );
 
-        $result->errors = array_merge(
-            $result->errors,
+        $executionResult->errors = array_merge(
+            $executionResult->errors,
             self::$errors
         );
 
         $queryTimer->stop();
 
-        return $result;
+        return $executionResult;
     }
 
     /**
@@ -94,7 +94,7 @@ class GraphQLQueryHandler
         self::$errors[] = $error;
     }
 
-    private function getErrorFormatter(): \Closure
+    private function getErrorFormatter(): Closure
     {
         return function (Error $error) {
             $this->logger->error($error->getMessage(), [$error]);

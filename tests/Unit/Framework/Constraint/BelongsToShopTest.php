@@ -20,7 +20,7 @@ class BelongsToShopTest extends TestCase
     {
         $this->expectException(ConstraintViolation::class);
         $tokenStub = $this->createPartialMock(Token::class, []);
-        $sut = new BelongsToShop(1);
-        $sut->assert($tokenStub);
+        $belongsToShop = new BelongsToShop(1);
+        $belongsToShop->assert($tokenStub);
     }
 }

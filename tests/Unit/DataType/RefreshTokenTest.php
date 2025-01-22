@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Tests\Unit\DataType;
 
+use DateTime;
 use PHPUnit\Framework\TestCase;
 use OxidEsales\GraphQL\Base\DataType\RefreshToken;
 use OxidEsales\GraphQL\Base\Infrastructure\Model\RefreshToken as RefreshTokenModel;
@@ -21,9 +22,9 @@ class RefreshTokenTest extends TestCase
     {
         $modelStub = $this->createStub(RefreshTokenModel::class);
 
-        $sut = new RefreshToken($modelStub);
-        $this->assertSame($modelStub, $sut->getEshopModel());
-        $this->assertSame(RefreshTokenModel::class, $sut->getModelClass());
+        $refreshToken = new RefreshToken($modelStub);
+        $this->assertSame($modelStub, $refreshToken->getEshopModel());
+        $this->assertSame(RefreshTokenModel::class, $refreshToken->getModelClass());
     }
 
     public function testFields(): void
@@ -35,18 +36,18 @@ class RefreshTokenTest extends TestCase
             ['oxuserid', $exampleUserId = uniqid()],
             ['oxshopid', $exampleShopId = uniqid()],
             ['token', $exampleToken = uniqid()],
-            ['issued_at', $exampleIssuedAt = (new \DateTime('now'))->format(\DateTime::ATOM)],
-            ['expires_at', $exampleExpiresAt = (new \DateTime('+1 day'))->format(\DateTime::ATOM)],
+            ['issued_at', $exampleIssuedAt = (new DateTime('now'))->format(DateTime::ATOM)],
+            ['expires_at', $exampleExpiresAt = (new DateTime('+1 day'))->format(DateTime::ATOM)],
         ]);
 
-        $sut = new RefreshToken($modelMock);
+        $refreshToken = new RefreshToken($modelMock);
 
-        $this->assertSame($exampleTokenId, $sut->id()->val());
-        $this->assertSame($exampleUserId, $sut->customerId()->val());
-        $this->assertSame($exampleShopId, $sut->shopId()->val());
-        $this->assertSame($exampleToken, $sut->token());
+        $this->assertSame($exampleTokenId, $refreshToken->id()->val());
+        $this->assertSame($exampleUserId, $refreshToken->customerId()->val());
+        $this->assertSame($exampleShopId, $refreshToken->shopId()->val());
+        $this->assertSame($exampleToken, $refreshToken->token());
 
-        $this->assertSame($exampleIssuedAt, $sut->createdAt()->format(\DateTime::ATOM));
-        $this->assertSame($exampleExpiresAt, $sut->expiresAt()->format(\DateTime::ATOM));
+        $this->assertSame($exampleIssuedAt, $refreshToken->createdAt()->format(DateTime::ATOM));
+        $this->assertSame($exampleExpiresAt, $refreshToken->expiresAt()->format(DateTime::ATOM));
     }
 }

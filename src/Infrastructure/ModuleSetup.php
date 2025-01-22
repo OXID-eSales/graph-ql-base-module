@@ -9,10 +9,8 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Infrastructure;
 
-use OxidEsales\DoctrineMigrationWrapper\MigrationsBuilder;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerBuilderFactory;
 use OxidEsales\GraphQL\Base\Service\ModuleConfiguration;
-use Symfony\Component\Console\Output\BufferedOutput;
 
 /**
  * @codeCoverageIgnore
@@ -34,11 +32,11 @@ class ModuleSetup
      */
     public static function onActivate(): void
     {
-        $container = (new ContainerBuilderFactory())->create()->getContainer();
-        $container->compile();
+        $containerBuilder = (new ContainerBuilderFactory())->create()->getContainer();
+        $containerBuilder->compile();
 
         /** @var ModuleSetup $moduleSetup */
-        $moduleSetup = $container->get(self::class);
+        $moduleSetup = $containerBuilder->get(self::class);
         $moduleSetup->runSetup();
     }
 

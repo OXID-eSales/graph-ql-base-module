@@ -21,12 +21,12 @@ class IDFilterTest extends DataTypeTestCase
 {
     public function testBasicIDFilter(): void
     {
-        $filter = IDFilter::fromUserInput(
+        $idFilter = IDFilter::fromUserInput(
             new ID('test')
         );
         $this->assertSame(
             'test',
-            (string)$filter->equals()
+            (string)$idFilter->equals()
         );
     }
 
@@ -37,10 +37,10 @@ class IDFilterTest extends DataTypeTestCase
             ->disableOriginalConstructor()
             ->getMock();
         $queryBuilder = new QueryBuilder($connectionMock);
-        $filter = IDFilter::fromUserInput(new ID('106d2528c6a9796fbd13cd30de6decf1'));
+        $idFilter = IDFilter::fromUserInput(new ID('106d2528c6a9796fbd13cd30de6decf1'));
 
         $this->expectException(InvalidArgumentException::class);
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $idFilter->addToQuery($queryBuilder, 'db_field');
     }
 
     public function testAddQueryPart(): void
@@ -52,10 +52,10 @@ class IDFilterTest extends DataTypeTestCase
         $queryBuilder = new QueryBuilder($connectionMock);
 
         $id = '106d2528c6a9796fbd13cd30de6decf1';
-        $filter = IDFilter::fromUserInput(new ID($id));
+        $idFilter = IDFilter::fromUserInput(new ID($id));
 
         $queryBuilder->select()->from('db_table');
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $idFilter->addToQuery($queryBuilder, 'db_field');
 
         /** @var CompositeExpression $where */
         $where = $queryBuilder->getQueryPart('where');
@@ -68,10 +68,10 @@ class IDFilterTest extends DataTypeTestCase
     public function testAddQueryPartWithAlias(): void
     {
         $queryBuilder = $this->createQueryBuilderMock();
-        $filter = IDFilter::fromUserInput(new ID('106d2528c6a9796fbd13cd30de6decf1'));
+        $idFilter = IDFilter::fromUserInput(new ID('106d2528c6a9796fbd13cd30de6decf1'));
 
         $queryBuilder->select()->from('db_table', 'db_table_alias');
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $idFilter->addToQuery($queryBuilder, 'db_field');
 
         /** @var CompositeExpression $where */
         $where = $queryBuilder->getQueryPart('where');

@@ -14,13 +14,13 @@ use DateTimeZone;
 
 final class DateTimeImmutableFactory
 {
-    public static function fromString(string $time = 'now', ?DateTimeZone $timezone = null): ?DateTimeImmutable
+    public static function fromString(string $time = 'now', ?DateTimeZone $dateTimeZone = null): ?DateTimeImmutable
     {
         if (!self::isValid($time)) {
             return null;
         }
 
-        return new DateTimeImmutable($time, $timezone);
+        return new DateTimeImmutable($time, $dateTimeZone);
     }
 
     public static function fromTimeStamp(int $timeStamp): ?DateTimeImmutable

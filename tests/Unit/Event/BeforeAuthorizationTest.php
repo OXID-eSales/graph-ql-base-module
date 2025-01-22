@@ -19,21 +19,21 @@ class BeforeAuthorizationTest extends TestCase
     {
         $tokenStub = $this->createPartialMock(Token::class, []);
 
-        $event = new BeforeAuthorization(
+        $beforeAuthorization = new BeforeAuthorization(
             $tokenStub,
             'right'
         );
 
         $this->assertInstanceOf(
             Token::class,
-            $event->getToken()
+            $beforeAuthorization->getToken()
         );
         $this->assertSame(
             'right',
-            $event->getRight()
+            $beforeAuthorization->getRight()
         );
         $this->assertNull(
-            $event->getAuthorized()
+            $beforeAuthorization->getAuthorized()
         );
     }
 }

@@ -35,9 +35,9 @@ class Token
     public const CLAIM_TOKENID = 'tokenid';
 
     public function __construct(
-        private ?UnencryptedToken $token,
-        private readonly JwtConfigurationBuilder $jwtConfigBuilder,
-        private readonly Legacy $legacyInfrastructure,
+        private ?UnencryptedToken $unencryptedToken,
+        private readonly JwtConfigurationBuilder $jwtConfigurationBuilder,
+        private readonly Legacy $legacy,
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly ModuleConfiguration $moduleConfiguration,
         private readonly TokenInfrastructure $tokenInfrastructure
@@ -46,16 +46,16 @@ class Token
 
     public function getTokenClaim(string $claim, mixed $default = null): mixed
     {
-        if (!$this->token instanceof UnencryptedToken) {
+        if (!$this->unencryptedToken instanceof UnencryptedToken) {
             return $default;
         }
 
-        return $this->token->claims()->get($claim, $default);
+        return $this->unencryptedToken->claims()->get($claim, $default);
     }
 
     public function getToken(): ?UnencryptedToken
     {
-        return $this->token;
+        return $this->unencryptedToken;
     }
 
     /**
@@ -64,7 +64,7 @@ class Token
      */
     public function createToken(?string $username = null, ?string $password = null): UnencryptedToken
     {
-        $user = $this->legacyInfrastructure->login($username, $password);
+        $user = $this->legacy->login($username, $password);
 
         return $this->createTokenForUser($user);
     }
@@ -79,34 +79,34 @@ class Token
 
         $time = new DateTimeImmutable('now');
         $expire = new DateTimeImmutable($this->moduleConfiguration->getTokenLifeTime());
-        $config = $this->jwtConfigBuilder->getConfiguration();
+        $configuration = $this->jwtConfigurationBuilder->getConfiguration();
 
-        $builder = $config->builder()
-            ->issuedBy($this->legacyInfrastructure->getShopUrl())
-            ->withHeader('iss', $this->legacyInfrastructure->getShopUrl())
-            ->permittedFor($this->legacyInfrastructure->getShopUrl())
+        $builder = $configuration->builder()
+            ->issuedBy($this->legacy->getShopUrl())
+            ->withHeader('iss', $this->legacy->getShopUrl())
+            ->permittedFor($this->legacy->getShopUrl())
             ->issuedAt($time)
             ->canOnlyBeUsedAfter($time)
             ->expiresAt($expire)
-            ->withClaim(self::CLAIM_SHOPID, $this->legacyInfrastructure->getShopId())
+            ->withClaim(self::CLAIM_SHOPID, $this->legacy->getShopId())
             ->withClaim(self::CLAIM_USERNAME, $user->email())
             ->withClaim(self::CLAIM_USERID, $user->id()->val())
             ->withClaim(self::CLAIM_USER_ANONYMOUS, $user->isAnonymous())
             ->withClaim(self::CLAIM_TOKENID, Legacy::createUniqueIdentifier());
 
-        $event = new BeforeTokenCreation($builder, $user);
+        $beforeTokenCreation = new BeforeTokenCreation($builder, $user);
         $this->eventDispatcher->dispatch(
-            $event
+            $beforeTokenCreation
         );
 
-        $token = $event->getBuilder()->getToken(
-            $config->signer(),
-            $config->signingKey()
+        $plain = $beforeTokenCreation->getBuilder()->getToken(
+            $configuration->signer(),
+            $configuration->signingKey()
         );
 
-        $this->registerToken($user, $token, $time, $expire);
+        $this->registerToken($user, $plain, $time, $expire);
 
-        return $token;
+        return $plain;
     }
 
     public function deleteToken(ID $tokenId): void
@@ -131,12 +131,12 @@ class Token
 
     private function registerToken(
         UserInterface $user,
-        UnencryptedToken $token,
+        UnencryptedToken $unencryptedToken,
         DateTimeImmutable $time,
         DateTimeImmutable $expire
     ): void {
         if (!$user->isAnonymous()) {
-            $this->tokenInfrastructure->registerToken($token, $time, $expire);
+            $this->tokenInfrastructure->registerToken($unencryptedToken, $time, $expire);
         }
     }
 

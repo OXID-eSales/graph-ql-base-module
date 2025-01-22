@@ -20,7 +20,7 @@ final class Login implements LoginInterface
 {
     public function __construct(
         private string $refreshToken,
-        private UnencryptedToken $accessToken
+        private UnencryptedToken $unencryptedToken
     ) {
     }
 
@@ -37,6 +37,6 @@ final class Login implements LoginInterface
      */
     public function accessToken(): string
     {
-        return $this->accessToken->toString();
+        return $this->unencryptedToken->toString();
     }
 }

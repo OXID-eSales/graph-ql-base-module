@@ -22,8 +22,8 @@ use OxidEsales\GraphQL\Base\Infrastructure\Token as TokenInfrastructure;
 class TokenValidator
 {
     public function __construct(
-        private readonly JwtConfigurationBuilder $jwtConfigBuilder,
-        private readonly Legacy $legacyInfrastructure,
+        private readonly JwtConfigurationBuilder $jwtConfigurationBuilder,
+        private readonly Legacy $legacy,
         private readonly TokenInfrastructure $tokenInfrastructure
     ) {
     }
@@ -39,37 +39,37 @@ class TokenValidator
      *
      * @internal
      */
-    public function validateToken(UnencryptedToken $token): void
+    public function validateToken(UnencryptedToken $unencryptedToken): void
     {
-        if (!$this->areConstraintsValid($token) || $this->isTokenExpired($token)) {
+        if (!$this->areConstraintsValid($unencryptedToken) || $this->isTokenExpired($unencryptedToken)) {
             throw new InvalidToken();
         }
 
-        if (!$token->claims()->get(Token::CLAIM_USER_ANONYMOUS) && !$this->isRegistered($token)) {
+        if (!$unencryptedToken->claims()->get(Token::CLAIM_USER_ANONYMOUS) && !$this->isRegistered($unencryptedToken)) {
             throw new UnknownToken();
         }
 
-        if ($this->isUserBlocked($token->claims()->get(Token::CLAIM_USERID))) {
+        if ($this->isUserBlocked($unencryptedToken->claims()->get(Token::CLAIM_USERID))) {
             throw new TokenUserBlocked();
         }
     }
 
-    private function areConstraintsValid(UnencryptedToken $token): bool
+    private function areConstraintsValid(UnencryptedToken $unencryptedToken): bool
     {
-        $config = $this->jwtConfigBuilder->getConfiguration();
-        $validator = $config->validator();
+        $configuration = $this->jwtConfigurationBuilder->getConfiguration();
+        $validator = $configuration->validator();
 
-        return $validator->validate($token, ...$config->validationConstraints());
+        return $validator->validate($unencryptedToken, ...$configuration->validationConstraints());
     }
 
-    private function isTokenExpired(UnencryptedToken $token): bool
+    private function isTokenExpired(UnencryptedToken $unencryptedToken): bool
     {
-        return $this->tokenInfrastructure->isTokenExpired($token->claims()->get(Token::CLAIM_TOKENID));
+        return $this->tokenInfrastructure->isTokenExpired($unencryptedToken->claims()->get(Token::CLAIM_TOKENID));
     }
 
     private function isUserBlocked(?string $userId): bool
     {
-        $groups = $this->legacyInfrastructure->getUserGroupIds($userId);
+        $groups = $this->legacy->getUserGroupIds($userId);
 
         if (in_array('oxidblocked', $groups)) {
             return true;
@@ -78,8 +78,8 @@ class TokenValidator
         return false;
     }
 
-    private function isRegistered(UnencryptedToken $token): bool
+    private function isRegistered(UnencryptedToken $unencryptedToken): bool
     {
-        return $this->tokenInfrastructure->isTokenRegistered($token->claims()->get(Token::CLAIM_TOKENID));
+        return $this->tokenInfrastructure->isTokenRegistered($unencryptedToken->claims()->get(Token::CLAIM_TOKENID));
     }
 }

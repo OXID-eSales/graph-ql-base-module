@@ -29,7 +29,7 @@ class RequestReader
 {
     public function __construct(
         private readonly TokenValidator $tokenValidator,
-        private readonly JwtConfigurationBuilder $jwtConfigBuilder
+        private readonly JwtConfigurationBuilder $jwtConfigurationBuilder
     ) {
     }
 
@@ -53,12 +53,12 @@ class RequestReader
             return null;
         }
 
-        /** @var Configuration $jwtConfig */
-        $jwtConfig = $this->jwtConfigBuilder->getConfiguration();
+        /** @var Configuration $configuration */
+        $configuration = $this->jwtConfigurationBuilder->getConfiguration();
 
         try {
             /** @var UnencryptedToken $token */
-            $token = $jwtConfig->parser()->parse($jwt);
+            $token = $configuration->parser()->parse($jwt);
         } catch (Exception) {
             throw new UnableToParseToken();
         }

@@ -20,58 +20,58 @@ class LoginCest
 
     private const ADMIN_PASSWORD = 'admin';
 
-    public function testLoginWithMissingCredentials(AcceptanceTester $I): void
+    public function testLoginWithMissingCredentials(AcceptanceTester $acceptanceTester): void
     {
-        $I->sendGQLQuery('query { token }'); // anonymous token
-        $result = $I->grabJsonResponseAsArray();
+        $acceptanceTester->sendGQLQuery('query { token }'); // anonymous token
+        $result = $acceptanceTester->grabJsonResponseAsArray();
 
-        $I->assertNotEmpty($result['data']['token']);
+        $acceptanceTester->assertNotEmpty($result['data']['token']);
     }
 
-    public function testLoginWithIncompleteCredentialsPassword(AcceptanceTester $I): void
+    public function testLoginWithIncompleteCredentialsPassword(AcceptanceTester $acceptanceTester): void
     {
-        $I->sendGQLQuery('query { token (username: "foo") }'); // anonymous token
-        $result = $I->grabJsonResponseAsArray();
+        $acceptanceTester->sendGQLQuery('query { token (username: "foo") }'); // anonymous token
+        $result = $acceptanceTester->grabJsonResponseAsArray();
 
-        $I->assertNotEmpty($result['data']['token']);
+        $acceptanceTester->assertNotEmpty($result['data']['token']);
     }
 
-    public function testLoginWithIncompleteCredentialsUsername(AcceptanceTester $I): void
+    public function testLoginWithIncompleteCredentialsUsername(AcceptanceTester $acceptanceTester): void
     {
-        $I->sendGQLQuery('query { token (password: "foo") }'); // anonymous token
-        $result = $I->grabJsonResponseAsArray();
+        $acceptanceTester->sendGQLQuery('query { token (password: "foo") }'); // anonymous token
+        $result = $acceptanceTester->grabJsonResponseAsArray();
 
-        $I->assertNotEmpty($result['data']['token']);
+        $acceptanceTester->assertNotEmpty($result['data']['token']);
     }
 
-    public function testLoginWithWrongCredentials(AcceptanceTester $I): void
+    public function testLoginWithWrongCredentials(AcceptanceTester $acceptanceTester): void
     {
-        $I->sendGQLQuery('query { token (username: "foo", password: "bar") }');
-        $result = $I->grabJsonResponseAsArray();
+        $acceptanceTester->sendGQLQuery('query { token (username: "foo", password: "bar") }');
+        $result = $acceptanceTester->grabJsonResponseAsArray();
 
-        $I->assertEquals('Username/password combination is invalid', $result['errors'][0]['message']);
+        $acceptanceTester->assertEquals('Username/password combination is invalid', $result['errors'][0]['message']);
     }
 
-    public function testLoginWithValidCredentials(AcceptanceTester $I): void
+    public function testLoginWithValidCredentials(AcceptanceTester $acceptanceTester): void
     {
         $query = 'query { token (username: "' . self::ADMIN_LOGIN . '", password: "' . self::ADMIN_PASSWORD . '") }';
-        $I->sendGQLQuery($query);
-        $result = $I->grabJsonResponseAsArray();
+        $acceptanceTester->sendGQLQuery($query);
+        $result = $acceptanceTester->grabJsonResponseAsArray();
 
-        $I->assertNotEmpty($result['data']['token']);
+        $acceptanceTester->assertNotEmpty($result['data']['token']);
     }
 
-    public function testLoginWithValidCredentialsInVariables(AcceptanceTester $I): void
+    public function testLoginWithValidCredentialsInVariables(AcceptanceTester $acceptanceTester): void
     {
-        $I->sendGQLQuery(
+        $acceptanceTester->sendGQLQuery(
             'query ($username: String!, $password: String!) { token (username: $username, password: $password) }',
             [
                 'username' => self::ADMIN_LOGIN,
                 'password' => self::ADMIN_PASSWORD,
             ]
         );
-        $result = $I->grabJsonResponseAsArray();
+        $result = $acceptanceTester->grabJsonResponseAsArray();
 
-        $I->assertNotEmpty($result['data']['token']);
+        $acceptanceTester->assertNotEmpty($result['data']['token']);
     }
 }

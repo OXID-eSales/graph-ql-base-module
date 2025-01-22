@@ -25,40 +25,40 @@ class RefreshTokenRepositoryTest extends TestCase
 {
     public function testGetNewRefreshTokenGivesCorrectlyFilledDataType(): void
     {
-        $sut = $this->getSut();
+        $refreshTokenRepository = $this->getSut();
 
         $userId = uniqid();
-        $token = $sut->getNewRefreshToken(
+        $refreshToken = $refreshTokenRepository->getNewRefreshToken(
             userId: $userId,
             lifeTime: $lifetime = '+1 month',
         );
-        $id = $token->id()->val();
+        $id = $refreshToken->id()->val();
 
         $this->assertNotEmpty($id);
-        $this->assertEquals(1, $token->shopId()->val());
-        $this->assertSame($userId, $token->customerId()->val());
-        $this->assertTrue(strlen($token->token()) === 255);
+        $this->assertEquals(1, $refreshToken->shopId()->val());
+        $this->assertSame($userId, $refreshToken->customerId()->val());
+        $this->assertTrue(strlen($refreshToken->token()) === 255);
 
         $this->assertSame(
             (new DateTime('now'))->format("Y-m-d H:i"),
-            $token->createdAt()->format("Y-m-d H:i")
+            $refreshToken->createdAt()->format("Y-m-d H:i")
         );
 
         $this->assertSame(
             (new DateTime($lifetime))->format("Y-m-d H:i"),
-            $token->expiresAt()->format("Y-m-d H:i")
+            $refreshToken->expiresAt()->format("Y-m-d H:i")
         );
     }
 
     public function testGetNewRefreshTokenRegistersTokenInDatabase(): void
     {
-        $sut = $this->getSut();
+        $refreshTokenRepository = $this->getSut();
 
-        $token = $sut->getNewRefreshToken(
+        $refreshToken = $refreshTokenRepository->getNewRefreshToken(
             userId: uniqid(),
             lifeTime: '+1 month',
         );
-        $id = $token->id()->val();
+        $id = $refreshToken->id()->val();
 
         $this->assertTrue($this->checkRefreshTokenWithIdExists($id));
     }
@@ -75,8 +75,8 @@ class RefreshTokenRepositoryTest extends TestCase
             expires: (new DateTime('+1 day'))->format(DateTime::ATOM)
         );
 
-        $sut = $this->getSut();
-        $sut->removeExpiredTokens();
+        $refreshTokenRepository = $this->getSut();
+        $refreshTokenRepository->removeExpiredTokens();
 
         $this->assertFalse($this->checkRefreshTokenWithIdExists($expiredId));
         $this->assertTrue($this->checkRefreshTokenWithIdExists($notExpiredId));
@@ -91,9 +91,9 @@ class RefreshTokenRepositoryTest extends TestCase
             token: $token = uniqid(),
         );
 
-        $sut = $this->getSut();
+        $refreshTokenRepository = $this->getSut();
 
-        $user = $sut->getTokenUser($token);
+        $user = $refreshTokenRepository->getTokenUser($token);
 
         $this->assertFalse($user->isAnonymous());
         $this->assertSame($user->id()->val(), $userId);
@@ -108,9 +108,9 @@ class RefreshTokenRepositoryTest extends TestCase
             token: $token = uniqid(),
         );
 
-        $sut = $this->getSut();
+        $refreshTokenRepository = $this->getSut();
 
-        $user = $sut->getTokenUser($token);
+        $user = $refreshTokenRepository->getTokenUser($token);
 
         $this->assertTrue($user->isAnonymous());
         $this->assertSame($user->id()->val(), $userId);
@@ -125,18 +125,18 @@ class RefreshTokenRepositoryTest extends TestCase
             token: $token = uniqid(),
         );
 
-        $sut = $this->getSut();
+        $refreshTokenRepository = $this->getSut();
 
         $this->expectException(InvalidRefreshToken::class);
-        $sut->getTokenUser($token);
+        $refreshTokenRepository->getTokenUser($token);
     }
 
     public function testGetTokenUserExplodesOnWrongToken(): void
     {
-        $sut = $this->getSut();
+        $refreshTokenRepository = $this->getSut();
 
         $this->expectException(InvalidRefreshToken::class);
-        $sut->getTokenUser(uniqid());
+        $refreshTokenRepository->getTokenUser(uniqid());
     }
 
     public function testInvalidateRefreshTokens(): void
@@ -149,11 +149,11 @@ class RefreshTokenRepositoryTest extends TestCase
             token: $token = uniqid(),
         );
 
-        $sut = $this->getSut();
-        $sut->invalidateUserTokens($userId);
+        $refreshTokenRepository = $this->getSut();
+        $refreshTokenRepository->invalidateUserTokens($userId);
 
         $this->expectException(InvalidRefreshToken::class);
-        $sut->getTokenUser($token);
+        $refreshTokenRepository->getTokenUser($token);
     }
 
     public function testInvalidateRefreshTokensWrongUserId(): void
@@ -166,10 +166,10 @@ class RefreshTokenRepositoryTest extends TestCase
             token: $token = uniqid(),
         );
 
-        $sut = $this->getSut();
-        $sut->invalidateUserTokens('some_user_id');
+        $refreshTokenRepository = $this->getSut();
+        $refreshTokenRepository->invalidateUserTokens('some_user_id');
 
-        $this->assertTrue($sut->getTokenUser($token) instanceof UserInterface);
+        $this->assertTrue($refreshTokenRepository->getTokenUser($token) instanceof UserInterface);
     }
 
     private function getDbConnection(): Connection

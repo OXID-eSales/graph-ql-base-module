@@ -21,9 +21,9 @@ class RefreshTokenCest
     private const ADMIN_LOGIN = 'noreply@oxid-esales.com';
     private const ADMIN_PASSWORD = 'admin';
 
-    public function testRefreshAccessToken(AcceptanceTester $I): void
+    public function testRefreshAccessToken(AcceptanceTester $acceptanceTester): void
     {
-        $I->sendGQLQuery(
+        $acceptanceTester->sendGQLQuery(
             'query ($username: String!, $password: String!) { login (username: $username, password: $password)
                 {
                     accessToken
@@ -36,22 +36,22 @@ class RefreshTokenCest
             ]
         );
 
-        $result = $I->grabJsonResponseAsArray();
-        $I->assertNotEmpty($result['data']['login']['accessToken']);
-        $I->assertNotEmpty($result['data']['login']['refreshToken']);
+        $result = $acceptanceTester->grabJsonResponseAsArray();
+        $acceptanceTester->assertNotEmpty($result['data']['login']['accessToken']);
+        $acceptanceTester->assertNotEmpty($result['data']['login']['refreshToken']);
 
-        $accessToken = $I->parseJwt($result['data']['login']['accessToken']);
+        $accessToken = $acceptanceTester->parseJwt($result['data']['login']['accessToken']);
         $fingerprintHash = $accessToken->claims()->get(FingerprintService::TOKEN_KEY);
-        $cookie = $I->grabCookies()->get(FingerprintService::COOKIE_KEY)->getRawValue();
+        $cookie = $acceptanceTester->grabCookies()->get(FingerprintService::COOKIE_KEY)->getRawValue();
 
-        $I->assertEquals(self::ADMIN_LOGIN, $accessToken->claims()->get(Token::CLAIM_USERNAME));
-        $I->assertNotEmpty($fingerprintHash);
-        $I->assertEquals(128, strlen($cookie));
-        $I->assertFalse($accessToken->claims()->get(Token::CLAIM_USER_ANONYMOUS));
+        $acceptanceTester->assertEquals(self::ADMIN_LOGIN, $accessToken->claims()->get(Token::CLAIM_USERNAME));
+        $acceptanceTester->assertNotEmpty($fingerprintHash);
+        $acceptanceTester->assertEquals(128, strlen($cookie));
+        $acceptanceTester->assertFalse($accessToken->claims()->get(Token::CLAIM_USER_ANONYMOUS));
 
         $refreshToken = $result['data']['login']['refreshToken'];
 
-        $I->sendGQLQuery(
+        $acceptanceTester->sendGQLQuery(
             'query ($refreshToken: String!, $fingerprintHash: String!) {
                 refresh (refreshToken: $refreshToken, fingerprintHash: $fingerprintHash)
             }',
@@ -60,18 +60,18 @@ class RefreshTokenCest
                 'fingerprintHash' => $fingerprintHash
             ]
         );
-        $result = $I->grabJsonResponseAsArray();
+        $result = $acceptanceTester->grabJsonResponseAsArray();
 
-        $I->assertNotEmpty($result['data']['refresh']);
+        $acceptanceTester->assertNotEmpty($result['data']['refresh']);
 
-        $accessToken = $I->parseJwt($result['data']['refresh']);
+        $accessToken = $acceptanceTester->parseJwt($result['data']['refresh']);
         $newFingerprint = $accessToken->claims()->get(FingerprintService::TOKEN_KEY);
-        $newCookie = $I->grabCookies()->get(FingerprintService::COOKIE_KEY)->getRawValue();
+        $newCookie = $acceptanceTester->grabCookies()->get(FingerprintService::COOKIE_KEY)->getRawValue();
 
-        $I->assertFalse($accessToken->claims()->get(Token::CLAIM_USER_ANONYMOUS));
+        $acceptanceTester->assertFalse($accessToken->claims()->get(Token::CLAIM_USER_ANONYMOUS));
 
-        $I->assertNotEquals($fingerprintHash, $newFingerprint);
+        $acceptanceTester->assertNotEquals($fingerprintHash, $newFingerprint);
 
-        $I->assertNotEquals($cookie, $newCookie);
+        $acceptanceTester->assertNotEquals($cookie, $newCookie);
     }
 }

@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Tests\Unit\Controller;
 
-use Lcobucci\JWT\UnencryptedToken;
 use OxidEsales\GraphQL\Base\Controller\Token as TokenController;
 use OxidEsales\GraphQL\Base\DataType\Filter\DateFilter;
 use OxidEsales\GraphQL\Base\DataType\Filter\IDFilter;
@@ -56,20 +55,20 @@ class TokenTest extends BaseTestCase
         $authentication->method('getUser')
             ->willReturn(new UserDataType($this->getUserModelStub('_testuserid')));
 
-        $filterList = TokenFilterList::fromUserInput(
+        $tokenFilterList = TokenFilterList::fromUserInput(
             new IDFilter(new ID('someone_else')),
             new IDFilter(new ID(1)),
             new DateFilter(null, ['2021-01-12 12:12:12', '2021-12-31 12:12:12'])
         );
-        $sort = TokenSorting::fromUserInput(TokenSorting::SORTING_DESC);
+        $tokenSorting = TokenSorting::fromUserInput(TokenSorting::SORTING_DESC);
         $pagination = Pagination::fromUserInput(10, 20);
 
         $tokenAdministration = $this->createPartialMock(TokenAdministration::class, ['tokens']);
         $tokenAdministration->method('tokens')
             ->with(
-                $filterList,
+                $tokenFilterList,
                 $pagination,
-                $sort
+                $tokenSorting
             )
             ->willReturn([]);
 
@@ -77,7 +76,7 @@ class TokenTest extends BaseTestCase
             tokenAdministration: $tokenAdministration,
             authentication: $authentication
         );
-        $tokenController->tokens($filterList, $pagination, $sort);
+        $tokenController->tokens($tokenFilterList, $pagination, $tokenSorting);
     }
 
     public function testCustomerTokensDelete(): void
@@ -108,7 +107,7 @@ class TokenTest extends BaseTestCase
 
     public function testRefreshGivesStringValueOfNewToken(): void
     {
-        $sut = $this->getTokenController(
+        $token = $this->getTokenController(
             refreshTokenService: $refreshTokenServiceMock = $this->createMock(RefreshTokenServiceInterface::class),
         );
 
@@ -119,7 +118,7 @@ class TokenTest extends BaseTestCase
         $refreshTokenServiceMock->method('refreshToken')
             ->with($refreshToken, $fingerprintHash)->willReturn($newRefreshToken);
 
-        $this->assertSame($newRefreshToken, $sut->refresh($refreshToken, $fingerprintHash));
+        $this->assertSame($newRefreshToken, $token->refresh($refreshToken, $fingerprintHash));
     }
 
     private function getTokenController(

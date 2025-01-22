@@ -48,18 +48,18 @@ class Token
      * @return TokenDataType[]
      */
     public function tokens(
-        ?TokenFilterList $filter = null,
+        ?TokenFilterList $tokenFilterList = null,
         ?Pagination $pagination = null,
-        ?TokenSorting $sort = null
+        ?TokenSorting $tokenSorting = null
     ): array {
         return $this->tokenAdministration->tokens(
-            $filter ?? TokenFilterList::fromUserInput(
+            $tokenFilterList ?? TokenFilterList::fromUserInput(
                 new IDFilter(
                     $this->authentication->getUser()->id()
                 )
             ),
             $pagination ?? new Pagination(),
-            $sort ?? TokenSorting::fromUserInput(Sorting::SORTING_ASC)
+            $tokenSorting ?? TokenSorting::fromUserInput(Sorting::SORTING_ASC)
         );
     }
 

@@ -30,7 +30,7 @@ class PasswordChangeSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly UserModelService $userModelService,
         private readonly RefreshTokenRepositoryInterface $refreshTokenRepository,
-        private readonly Token $tokenInfrastructure
+        private readonly Token $token
     ) {
     }
 
@@ -71,7 +71,7 @@ class PasswordChangeSubscriber implements EventSubscriberInterface
         }
 
         $this->refreshTokenRepository->invalidateUserTokens($model->getId());
-        $this->tokenInfrastructure->invalidateUserTokens($model->getId());
+        $this->token->invalidateUserTokens($model->getId());
         unset($this->userIdWithChangedPwd[$model->getId()]);
     }
 

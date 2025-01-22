@@ -19,7 +19,7 @@ class TokenFilterListTest extends DataTypeTestCase
 {
     public function testDefaultFactory(): void
     {
-        $filterList = new TokenFilterList();
+        $tokenFilterList = new TokenFilterList();
 
         $expected = [
             'oxuserid' => null,
@@ -27,7 +27,7 @@ class TokenFilterListTest extends DataTypeTestCase
             'expires_at' => null,
         ];
 
-        $this->assertSame($expected, $filterList->getFilters());
+        $this->assertSame($expected, $tokenFilterList->getFilters());
     }
 
     public function testFactory(): void
@@ -38,20 +38,20 @@ class TokenFilterListTest extends DataTypeTestCase
             'expires_at' => new DateFilter(null, ['2021-01-12 12:12:12', '2021-12-31 12:12:12']),
         ];
 
-        $filterList = new TokenFilterList(...array_values($expected));
+        $tokenFilterList = new TokenFilterList(...array_values($expected));
 
-        $this->assertSame($expected, $filterList->getFilters());
+        $this->assertSame($expected, $tokenFilterList->getFilters());
     }
 
     public function testActiveFilter(): void
     {
-        $filterList = new TokenFilterList();
+        $tokenFilterList = new TokenFilterList();
 
-        $this->assertNull($filterList->getActive());
+        $this->assertNull($tokenFilterList->getActive());
 
-        $filterList->withActiveFilter(new BoolFilter());
+        $tokenFilterList->withActiveFilter(new BoolFilter());
 
-        $this->assertNull($filterList->getActive());
+        $this->assertNull($tokenFilterList->getActive());
     }
 
     public function testWithUserFilter(): void
@@ -60,9 +60,9 @@ class TokenFilterListTest extends DataTypeTestCase
 
         $this->assertNull($filterList->getUserFilter());
 
-        $userFilter = new IDFilter(new ID('_userId'));
-        $filterList = $filterList->withUserFilter($userFilter);
+        $idFilter = new IDFilter(new ID('_userId'));
+        $filterList = $filterList->withUserFilter($idFilter);
 
-        $this->assertEquals($userFilter, $filterList->getUserFilter());
+        $this->assertEquals($idFilter, $filterList->getUserFilter());
     }
 }

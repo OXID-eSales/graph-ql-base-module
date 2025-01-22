@@ -17,13 +17,13 @@ use OxidEsales\GraphQL\Base\Infrastructure\Legacy;
 class UserModelService
 {
     public function __construct(
-        private readonly Legacy $legacyInfrastructure,
+        private readonly Legacy $legacy,
     ) {
     }
 
     public function isPasswordChanged(string $userId, ?string $passwordNew): bool
     {
-        $userModel = $this->legacyInfrastructure->getUserModel($userId);
+        $userModel = $this->legacy->getUserModel($userId);
         $currentPassword = $userModel->getFieldData('oxpassword');
         if (!$passwordNew || !$currentPassword) {
             return false;

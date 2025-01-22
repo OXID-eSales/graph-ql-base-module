@@ -58,7 +58,7 @@ class FloatFilterTest extends DataTypeTestCase
 
     public function testGivesParametersIfSet(): void
     {
-        $filter = FloatFilter::fromUserInput(
+        $floatFilter = FloatFilter::fromUserInput(
             5.0,
             10.0,
             1.0,
@@ -70,22 +70,22 @@ class FloatFilterTest extends DataTypeTestCase
 
         $this->assertSame(
             5.0,
-            $filter->equals()
+            $floatFilter->equals()
         );
         $this->assertSame(
             10.0,
-            $filter->lessThan()
+            $floatFilter->lessThan()
         );
         $this->assertSame(
             1.0,
-            $filter->greaterThan()
+            $floatFilter->greaterThan()
         );
         $this->assertSame(
             [
                 1.0,
                 10.0,
             ],
-            $filter->between()
+            $floatFilter->between()
         );
     }
 
@@ -128,10 +128,10 @@ class FloatFilterTest extends DataTypeTestCase
     public function testAddQueryPartWithNoFrom(): void
     {
         $queryBuilder = $this->createQueryBuilderMock();
-        $filter = FloatFilter::fromUserInput(608.8077);
+        $floatFilter = FloatFilter::fromUserInput(608.8077);
 
         $this->expectException(InvalidArgumentException::class);
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $floatFilter->addToQuery($queryBuilder, 'db_field');
     }
 
     public function testAddQueryPartEquals(): void
@@ -139,10 +139,10 @@ class FloatFilterTest extends DataTypeTestCase
         $queryBuilder = $this->createQueryBuilderMock();
 
         $number = 608.8077;
-        $filter = FloatFilter::fromUserInput($number);
+        $floatFilter = FloatFilter::fromUserInput($number);
 
         $queryBuilder->select()->from('db_table');
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $floatFilter->addToQuery($queryBuilder, 'db_field');
 
         /** @var CompositeExpression $where */
         $where = $queryBuilder->getQueryPart('where');
@@ -157,10 +157,10 @@ class FloatFilterTest extends DataTypeTestCase
         $queryBuilder = $this->createQueryBuilderMock();
 
         $number = 608.8077;
-        $filter = FloatFilter::fromUserInput(null, $number);
+        $floatFilter = FloatFilter::fromUserInput(null, $number);
 
         $queryBuilder->select()->from('db_table');
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $floatFilter->addToQuery($queryBuilder, 'db_field');
 
         /** @var CompositeExpression $where */
         $where = $queryBuilder->getQueryPart('where');
@@ -175,10 +175,10 @@ class FloatFilterTest extends DataTypeTestCase
         $queryBuilder = $this->createQueryBuilderMock();
 
         $number = 608.8077;
-        $filter = FloatFilter::fromUserInput(null, null, $number);
+        $floatFilter = FloatFilter::fromUserInput(null, null, $number);
 
         $queryBuilder->select()->from('db_table');
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $floatFilter->addToQuery($queryBuilder, 'db_field');
 
         /** @var CompositeExpression $where */
         $where = $queryBuilder->getQueryPart('where');
@@ -196,10 +196,10 @@ class FloatFilterTest extends DataTypeTestCase
             608.8077,
             3469.01,
         ];
-        $filter = FloatFilter::fromUserInput(null, null, null, $numbers);
+        $floatFilter = FloatFilter::fromUserInput(null, null, null, $numbers);
 
         $queryBuilder->select()->from('db_table');
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $floatFilter->addToQuery($queryBuilder, 'db_field');
 
         /** @var CompositeExpression $where */
         $where = $queryBuilder->getQueryPart('where');
@@ -216,10 +216,10 @@ class FloatFilterTest extends DataTypeTestCase
     public function testAddQueryPartWithAlias(): void
     {
         $queryBuilder = $this->createQueryBuilderMock();
-        $filter = FloatFilter::fromUserInput(608.8077);
+        $floatFilter = FloatFilter::fromUserInput(608.8077);
 
         $queryBuilder->select()->from('db_table', 'db_table_alias');
-        $filter->addToQuery($queryBuilder, 'db_field');
+        $floatFilter->addToQuery($queryBuilder, 'db_field');
 
         /** @var CompositeExpression $where */
         $where = $queryBuilder->getQueryPart('where');

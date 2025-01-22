@@ -17,22 +17,22 @@ final class UnknownTokenTest extends TestCase
 {
     public function testExceptionCategory(): void
     {
-        $invalidTokenException = new UnknownToken();
+        $unknownToken = new UnknownToken();
 
-        $this->assertSame(ErrorCategories::PERMISSIONERRORS, $invalidTokenException->getCategory());
+        $this->assertSame(ErrorCategories::PERMISSIONERRORS, $unknownToken->getCategory());
     }
 
     public function testIsClientSafe(): void
     {
-        $invalidTokenException = new UnknownToken();
+        $unknownToken = new UnknownToken();
 
-        $this->assertTrue($invalidTokenException->isClientSafe());
+        $this->assertTrue($unknownToken->isClientSafe());
     }
 
     public function testUnknownToken(): void
     {
-        $exception = new UnknownToken();
+        $unknownToken = new UnknownToken();
 
-        $this->assertSame('The token is not registered', $exception->getMessage());
+        $this->assertSame('The token is not registered', $unknownToken->getMessage());
     }
 }

@@ -18,7 +18,6 @@ use OxidEsales\GraphQL\Base\DataType\Pagination\Pagination;
 use OxidEsales\GraphQL\Base\DataType\ShopModelAwareInterface;
 use OxidEsales\GraphQL\Base\DataType\Sorting\Sorting;
 use OxidEsales\GraphQL\Base\Exception\NotFound;
-use PDO;
 use RuntimeException;
 
 class Repository
@@ -46,12 +45,12 @@ class Repository
         string $type,
         bool $disableSubShop = true
     ) {
-        $model = $this->getModel($type::getModelClass(), $disableSubShop);
+        $baseModel = $this->getModel($type::getModelClass(), $disableSubShop);
 
-        if (!$model->load($id) || (method_exists($model, 'canView') && !$model->canView())) {
+        if (!$baseModel->load($id) || (method_exists($baseModel, 'canView') && !$baseModel->canView())) {
             throw new NotFound($id);
         }
-        $type = new $type($model);
+        $type = new $type($baseModel);
 
         if (!($type instanceof ShopModelAwareInterface)) {
             throw new InvalidArgumentException();
@@ -73,32 +72,32 @@ class Repository
      */
     public function getList(
         string $type,
-        FilterList $filter,
+        FilterList $filterList,
         Pagination $pagination,
         Sorting $sorting,
         bool $disableSubShop = true
     ): array {
         $types = [];
-        $model = $this->getModel(
+        $baseModel = $this->getModel(
             $type::getModelClass(),
             $disableSubShop
         );
         $queryBuilder = $this->queryBuilderFactory->create();
-        $queryBuilder->select($model->getViewName() . '.*')
-            ->from($model->getViewName());
+        $queryBuilder->select($baseModel->getViewName() . '.*')
+            ->from($baseModel->getViewName());
 
         if (
-            $filter->getActive() !== null &&
-            $filter->getActive()->equals() === true
+            $filterList->getActive() !== null &&
+            $filterList->getActive()->equals() === true
         ) {
-            $activeSnippet = $model->getSqlActiveSnippet();
+            $activeSnippet = $baseModel->getSqlActiveSnippet();
 
             if (strlen($activeSnippet)) {
                 $queryBuilder->andWhere($activeSnippet);
             }
         }
 
-        $filters = array_filter($filter->getFilters());
+        $filters = array_filter($filterList->getFilters());
         foreach ($filters as $field => $fieldFilter) {
             $fieldFilter->addToQuery($queryBuilder, $field);
         }
@@ -110,7 +109,7 @@ class Repository
         /** @var Result $result */
         $result = $queryBuilder->execute();
         foreach ($result->fetchAllAssociative() as $row) {
-            $newModel = clone $model;
+            $newModel = clone $baseModel;
             $newModel->assign($row);
             $types[] = new $type($newModel);
         }
@@ -122,9 +121,9 @@ class Repository
      * @return true
      * @throws NotFound
      */
-    public function delete(BaseModel $item): bool
+    public function delete(BaseModel $baseModel): bool
     {
-        if (!$item->delete()) {
+        if (!$baseModel->delete()) {
             throw new RuntimeException('Failed deleting object');
         }
 
@@ -134,9 +133,9 @@ class Repository
     /**
      * @return true
      */
-    public function saveModel(BaseModel $item): bool
+    public function saveModel(BaseModel $baseModel): bool
     {
-        if (!$item->save()) {
+        if (!$baseModel->save()) {
             throw new RuntimeException('Object save failed');
         }
 

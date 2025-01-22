@@ -112,8 +112,8 @@ class ModuleConfigurationTest extends TestCase
     public function testGetCookieSetting(): void
     {
         $moduleSettingBridgeMock = $this->getMockBuilder(ModuleSettingServiceInterface::class)->getMock();
-        $toReturn = new UnicodeString(ModuleConfiguration::COOKIE_SETTING_SAME);
-        $moduleSettingBridgeMock->method('getString')->willReturn($toReturn);
+        $unicodeString = new UnicodeString(ModuleConfiguration::COOKIE_SETTING_SAME);
+        $moduleSettingBridgeMock->method('getString')->willReturn($unicodeString);
 
         $moduleConfiguration = new ModuleConfiguration($moduleSettingBridgeMock);
 

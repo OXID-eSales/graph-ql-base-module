@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Tests\Codeception\Helper;
 
-class Acceptance extends \Codeception\Module
+use Codeception\Module;
+
+class Acceptance extends Module
 {
 }

@@ -17,22 +17,22 @@ final class TokenUserBlockedTest extends TestCase
 {
     public function testExceptionCategory(): void
     {
-        $invalidTokenException = new TokenUserBlocked();
+        $tokenUserBlocked = new TokenUserBlocked();
 
-        $this->assertSame(ErrorCategories::PERMISSIONERRORS, $invalidTokenException->getCategory());
+        $this->assertSame(ErrorCategories::PERMISSIONERRORS, $tokenUserBlocked->getCategory());
     }
 
     public function testIsClientSafe(): void
     {
-        $invalidTokenException = new TokenUserBlocked();
+        $tokenUserBlocked = new TokenUserBlocked();
 
-        $this->assertTrue($invalidTokenException->isClientSafe());
+        $this->assertTrue($tokenUserBlocked->isClientSafe());
     }
 
     public function testUserBlocked(): void
     {
-        $invalidTokenException = new TokenUserBlocked();
+        $tokenUserBlocked = new TokenUserBlocked();
 
-        $this->assertSame('User is blocked', $invalidTokenException->getMessage());
+        $this->assertSame('User is blocked', $tokenUserBlocked->getMessage());
     }
 }

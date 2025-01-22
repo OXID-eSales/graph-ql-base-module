@@ -64,10 +64,10 @@ class StringFilter implements FilterInterface
         return $this->beginsWith;
     }
 
-    public function addToQuery(QueryBuilder $builder, string $field): void
+    public function addToQuery(QueryBuilder $queryBuilder, string $field): void
     {
         /** @var array $from */
-        $from = $builder->getQueryPart('from');
+        $from = $queryBuilder->getQueryPart('from');
 
         if ($from === []) {
             throw new InvalidArgumentException('QueryBuilder is missing "from" SQL part');
@@ -75,19 +75,19 @@ class StringFilter implements FilterInterface
         $table = $from[0]['alias'] ?? $from[0]['table'];
 
         if ($this->equals) {
-            $builder->andWhere(sprintf('%s.%s = :%s_eq', $table, strtoupper($field), $field))
+            $queryBuilder->andWhere(sprintf('%s.%s = :%s_eq', $table, strtoupper($field), $field))
                 ->setParameter(':' . $field . '_eq', $this->equals);
             // if equals is set, then no other conditions may apply
             return;
         }
 
         if ($this->contains) {
-            $builder->andWhere(sprintf('%s.%s LIKE :%s_contain', $table, strtoupper($field), $field))
+            $queryBuilder->andWhere(sprintf('%s.%s LIKE :%s_contain', $table, strtoupper($field), $field))
                 ->setParameter(':' . $field . '_contain', '%' . $this->contains . '%');
         }
 
         if ($this->beginsWith) {
-            $builder->andWhere(sprintf('%s.%s LIKE :%s_begins', $table, strtoupper($field), $field))
+            $queryBuilder->andWhere(sprintf('%s.%s LIKE :%s_begins', $table, strtoupper($field), $field))
                 ->setParameter(':' . $field . '_begins', $this->beginsWith . '%');
         }
     }

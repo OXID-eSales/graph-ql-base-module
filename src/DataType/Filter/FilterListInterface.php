@@ -16,7 +16,7 @@ interface FilterListInterface
      */
     public function getFilters(): array;
 
-    public function withActiveFilter(?BoolFilter $active): self;
+    public function withActiveFilter(?BoolFilter $boolFilter): self;
 
     public function getActive(): ?BoolFilter;
 }

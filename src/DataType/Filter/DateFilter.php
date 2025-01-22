@@ -52,10 +52,10 @@ class DateFilter implements FilterInterface
         return $this->between;
     }
 
-    public function addToQuery(QueryBuilder $builder, string $field): void
+    public function addToQuery(QueryBuilder $queryBuilder, string $field): void
     {
         /** @var array $from */
-        $from = $builder->getQueryPart('from');
+        $from = $queryBuilder->getQueryPart('from');
 
         if ($from === []) {
             throw new InvalidArgumentException('QueryBuilder is missing "from" SQL part');
@@ -63,7 +63,7 @@ class DateFilter implements FilterInterface
         $table = $from[0]['alias'] ?? $from[0]['table'];
 
         if ($this->equals) {
-            $builder->andWhere($table . '.' . strtoupper($field) . ' = :' . $field . '_eq')
+            $queryBuilder->andWhere($table . '.' . strtoupper($field) . ' = :' . $field . '_eq')
                 ->setParameter(':' . $field . '_eq', $this->equals->format(self::SQL_DATETIME_FORMAT));
             // if equals is set, then no other conditions may apply
             return;
@@ -71,7 +71,7 @@ class DateFilter implements FilterInterface
 
         if ($this->between) {
             $where = sprintf('%s.%s BETWEEN :%s_lower AND :%s_upper', $table, strtoupper($field), $field, $field);
-            $builder->andWhere($where)
+            $queryBuilder->andWhere($where)
                 ->setParameter(':' . $field . '_lower', $this->between[0]->format(self::SQL_DATETIME_FORMAT))
                 ->setParameter(':' . $field . '_upper', $this->between[1]->format(self::SQL_DATETIME_FORMAT));
         }
@@ -95,16 +95,16 @@ class DateFilter implements FilterInterface
         ) {
             throw new OutOfBoundsException();
         }
-        $zone = new DateTimeZone('UTC');
+        $dateTimeZone = new DateTimeZone('UTC');
 
         if ($equals !== null) {
-            $equals = new DateTimeImmutable($equals, $zone);
+            $equals = new DateTimeImmutable($equals, $dateTimeZone);
         }
 
         if ($between) {
             $between = array_map(
-                function ($date) use ($zone) {
-                    return new DateTimeImmutable($date, $zone);
+                function ($date) use ($dateTimeZone) {
+                    return new DateTimeImmutable($date, $dateTimeZone);
                 },
                 $between
             );

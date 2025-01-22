@@ -17,7 +17,7 @@ use TheCodingMachine\GraphQLite\Annotations\Query;
 class Login
 {
     public function __construct(
-        protected Token $tokenService,
+        protected Token $token,
         protected LoginServiceInterface $loginService,
     ) {
     }
@@ -30,7 +30,7 @@ class Login
      */
     public function token(?string $username = null, ?string $password = null): string
     {
-        return $this->tokenService->createToken(
+        return $this->token->createToken(
             $username,
             $password
         )->toString();

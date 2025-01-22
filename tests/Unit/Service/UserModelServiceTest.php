@@ -24,7 +24,7 @@ class UserModelServiceTest extends TestCase
         $password = uniqid();
         $newPassword = uniqid();
 
-        $sut = new UserModelService(
+        $userModelService = new UserModelService(
             legacyInfrastructure: $legacyInfrastructureMock = $this->createMock(Legacy::class),
         );
 
@@ -32,7 +32,7 @@ class UserModelServiceTest extends TestCase
             $this->getUserModelMock($password)
         );
 
-        $this->assertTrue($sut->isPasswordChanged($userId, $newPassword));
+        $this->assertTrue($userModelService->isPasswordChanged($userId, $newPassword));
     }
 
     public function testIsPasswordChangedOnSamePassword(): void
@@ -41,7 +41,7 @@ class UserModelServiceTest extends TestCase
         $password = uniqid();
         $newPassword = $password;
 
-        $sut = new UserModelService(
+        $userModelService = new UserModelService(
             legacyInfrastructure: $legacyInfrastructureMock = $this->createMock(Legacy::class),
         );
 
@@ -49,7 +49,7 @@ class UserModelServiceTest extends TestCase
             $this->getUserModelMock($password)
         );
 
-        $this->assertFalse($sut->isPasswordChanged($userId, $newPassword));
+        $this->assertFalse($userModelService->isPasswordChanged($userId, $newPassword));
     }
 
     protected function getUserModelMock(string $password): UserModel

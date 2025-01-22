@@ -7,6 +7,8 @@
 
 declare(strict_types=1);
 
+use OxidEsales\GraphQL\Base\Component\Widget\GraphQL;
+
 /**
  * Metadata version
  */
@@ -34,7 +36,7 @@ $aModule = [
     ],
     'controllers' => [
         // Widget Controller
-        'graphql' => OxidEsales\GraphQL\Base\Component\Widget\GraphQL::class,
+        'graphql' => GraphQL::class,
     ],
     'templates'   => [
     ],

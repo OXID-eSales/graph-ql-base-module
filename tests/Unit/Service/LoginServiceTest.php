@@ -23,7 +23,7 @@ class LoginServiceTest extends TestCase
 {
     public function testLoginCreatesLoginInputTypeResult(): void
     {
-        $sut = new LoginService(
+        $loginService = new LoginService(
             legacyInfrastructure: $legacyInfrastructureMock = $this->createMock(Legacy::class),
             tokenService: $tokenServiceMock = $this->createMock(TokenService::class),
             refreshTokenService: $refreshTokenMock = $this->createMock(RefreshTokenServiceInterface::class),
@@ -44,9 +44,9 @@ class LoginServiceTest extends TestCase
             $this->createConfiguredStub(UnencryptedToken::class, ['toString' => $accessToken])
         );
 
-        $result = $sut->login($userName, $password);
+        $login = $loginService->login($userName, $password);
 
-        $this->assertSame($refreshToken, $result->refreshToken());
-        $this->assertSame($accessToken, $result->accessToken());
+        $this->assertSame($refreshToken, $login->refreshToken());
+        $this->assertSame($accessToken, $login->accessToken());
     }
 }

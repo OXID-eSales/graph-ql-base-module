@@ -21,16 +21,16 @@ use TheCodingMachine\GraphQLite\Types\ID;
 final class RefreshToken implements ShopModelAwareInterface, RefreshTokenInterface
 {
     /** @var GraphQLTokenModel */
-    private $tokenModel;
+    private $graphQLTokenModel;
 
-    public function __construct(GraphQLTokenModel $tokenModel)
+    public function __construct(GraphQLTokenModel $graphQLTokenModel)
     {
-        $this->tokenModel = $tokenModel;
+        $this->graphQLTokenModel = $graphQLTokenModel;
     }
 
     public function getEshopModel(): GraphQLTokenModel
     {
-        return $this->tokenModel;
+        return $this->graphQLTokenModel;
     }
 
     /**
@@ -39,7 +39,7 @@ final class RefreshToken implements ShopModelAwareInterface, RefreshTokenInterfa
      */
     public function id(): ID
     {
-        return new ID((string)$this->tokenModel->getId());
+        return new ID((string)$this->graphQLTokenModel->getId());
     }
 
     /**
@@ -47,7 +47,7 @@ final class RefreshToken implements ShopModelAwareInterface, RefreshTokenInterfa
      */
     public function token(): string
     {
-        return (string)$this->tokenModel->getRawFieldData('token');
+        return (string)$this->graphQLTokenModel->getRawFieldData('token');
     }
 
     /**
@@ -56,7 +56,7 @@ final class RefreshToken implements ShopModelAwareInterface, RefreshTokenInterfa
     public function createdAt(): ?DateTimeInterface
     {
         return DateTimeImmutableFactory::fromString(
-            (string)$this->tokenModel->getRawFieldData('issued_at')
+            (string)$this->graphQLTokenModel->getRawFieldData('issued_at')
         );
     }
 
@@ -66,7 +66,7 @@ final class RefreshToken implements ShopModelAwareInterface, RefreshTokenInterfa
     public function expiresAt(): ?DateTimeInterface
     {
         return DateTimeImmutableFactory::fromString(
-            (string)$this->tokenModel->getRawFieldData('expires_at')
+            (string)$this->graphQLTokenModel->getRawFieldData('expires_at')
         );
     }
 
@@ -75,7 +75,7 @@ final class RefreshToken implements ShopModelAwareInterface, RefreshTokenInterfa
      */
     public function customerId(): ID
     {
-        return new ID((string)$this->tokenModel->getRawFieldData('oxuserid'));
+        return new ID((string)$this->graphQLTokenModel->getRawFieldData('oxuserid'));
     }
 
     /**
@@ -83,7 +83,7 @@ final class RefreshToken implements ShopModelAwareInterface, RefreshTokenInterfa
      */
     public function shopId(): ID
     {
-        return new ID((string)$this->tokenModel->getRawFieldData('oxshopid'));
+        return new ID((string)$this->graphQLTokenModel->getRawFieldData('oxshopid'));
     }
 
     public static function getModelClass(): string

@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Service;
 
-use OxidEsales\GraphQL\Base\DataType\Filter\IDFilter;
 use OxidEsales\GraphQL\Base\DataType\Pagination\Pagination;
 use OxidEsales\GraphQL\Base\DataType\Sorting\TokenSorting;
 use OxidEsales\GraphQL\Base\DataType\Token as TokenDataType;
@@ -32,7 +31,7 @@ use TheCodingMachine\GraphQLite\Types\ID;
 class TokenAdministration
 {
     public function __construct(
-        private readonly BaseRepository $repository,
+        private readonly BaseRepository $baseRepository,
         private readonly Authorization $authorization,
         private readonly Authentication $authentication,
         private readonly TokenInfrastructure $tokenInfrastructure,
@@ -45,30 +44,30 @@ class TokenAdministration
      * @return TokenDataType[]
      */
     public function tokens(
-        TokenFilterList $filterList,
+        TokenFilterList $tokenFilterList,
         Pagination $pagination,
-        TokenSorting $sort
+        TokenSorting $tokenSorting
     ): array {
-        if (!$this->canSeeTokens($filterList)) {
+        if (!$this->canSeeTokens($tokenFilterList)) {
             throw new InvalidLogin('Unauthorized');
         }
 
-        return $this->repository->getList(
+        return $this->baseRepository->getList(
             TokenDataType::class,
-            $filterList,
+            $tokenFilterList,
             $pagination,
-            $sort
+            $tokenSorting
         );
     }
 
-    private function canSeeTokens(TokenFilterList $filterList): bool
+    private function canSeeTokens(TokenFilterList $tokenFilterList): bool
     {
         if ($this->authorization->isAllowed('VIEW_ANY_TOKEN')) {
             return true;
         }
 
         //without right to view any token user can only add filter on own id or no filter on id
-        $userFilter = $filterList->getUserFilter();
+        $userFilter = $tokenFilterList->getUserFilter();
         if ($userFilter === null) {
             return true;
         }
@@ -76,7 +75,7 @@ class TokenAdministration
     }
 
     /**
-     * @throws \OxidEsales\GraphQL\Base\Exception\NotFound
+     * @throws NotFound
      */
     public function customerTokensDelete(?ID $customerId): int
     {
@@ -88,7 +87,7 @@ class TokenAdministration
 
         try {
             /** @var UserDataType $user */
-            $user = $this->repository->getById(
+            $user = $this->baseRepository->getById(
                 (string)$customerId,
                 UserDataType::class
             );

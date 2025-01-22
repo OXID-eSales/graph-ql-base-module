@@ -9,6 +9,9 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\Tests\Codeception;
 
+use Codeception\Actor;
+use OxidEsales\GraphQL\Base\Tests\Codeception\_generated\AcceptanceTesterActions;
+
 /**
  * Inherited Methods
  *
@@ -25,7 +28,7 @@ namespace OxidEsales\GraphQL\Base\Tests\Codeception;
  *
  * @SuppressWarnings(PHPMD)
  */
-class AcceptanceTester extends \Codeception\Actor
+class AcceptanceTester extends Actor
 {
-    use _generated\AcceptanceTesterActions;
+    use AcceptanceTesterActions;
 }

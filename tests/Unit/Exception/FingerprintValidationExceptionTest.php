@@ -18,15 +18,15 @@ class FingerprintValidationExceptionTest extends TestCase
 {
     public function testExceptionCategory(): void
     {
-        $fingerprintMissingException = new FingerprintValidationException(uniqid());
+        $fingerprintValidationException = new FingerprintValidationException(uniqid());
 
-        $this->assertSame(ErrorCategories::REQUESTERROR, $fingerprintMissingException->getCategory());
+        $this->assertSame(ErrorCategories::REQUESTERROR, $fingerprintValidationException->getCategory());
     }
 
     public function testExceptionType(): void
     {
-        $fingerprintMissingException = new FingerprintValidationException(uniqid());
+        $fingerprintValidationException = new FingerprintValidationException(uniqid());
 
-        $this->assertInstanceOf(Error::class, $fingerprintMissingException);
+        $this->assertInstanceOf(Error::class, $fingerprintValidationException);
     }
 }

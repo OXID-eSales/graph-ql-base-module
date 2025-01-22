@@ -18,7 +18,7 @@ class Authentication implements AuthenticationServiceInterface
 {
     public function __construct(
         private readonly LegacyInfrastructure $legacyInfrastructure,
-        private Token $tokenService
+        private Token $token
     ) {
     }
 
@@ -27,7 +27,7 @@ class Authentication implements AuthenticationServiceInterface
      */
     public function isLogged(): bool
     {
-        if (!$this->tokenService->getToken()) {
+        if (!$this->token->getToken()) {
             return false;
         }
         return !$this->getUser()->isAnonymous();
@@ -36,8 +36,8 @@ class Authentication implements AuthenticationServiceInterface
     public function getUser(): User
     {
         return new User(
-            $this->legacyInfrastructure->getUserModel($this->tokenService->getTokenClaim(Token::CLAIM_USERID)),
-            $this->tokenService->getTokenClaim(Token::CLAIM_USER_ANONYMOUS, false)
+            $this->legacyInfrastructure->getUserModel($this->token->getTokenClaim(Token::CLAIM_USERID)),
+            $this->token->getTokenClaim(Token::CLAIM_USER_ANONYMOUS, false)
         );
     }
 }

@@ -35,9 +35,9 @@ class TokenAdministrationTest extends BaseTestCase
         $authorizationService = $this->createPartialMock(Authorization::class, ['isAllowed']);
         $authorizationService->method('isAllowed')->willReturn(false);
 
-        $userDataType = new UserDataType($this->getUserModelStub('_testuserid'));
+        $user = new UserDataType($this->getUserModelStub('_testuserid'));
         $authenticationService = $this->createPartialMock(Authentication::class, ['getUser']);
-        $authenticationService->method('getUser')->willReturn($userDataType);
+        $authenticationService->method('getUser')->willReturn($user);
 
         $tokenInfrastructure = $this->createPartialMock(TokenInfrastructure::class, []);
         $legacyInfrastructure = $this->createPartialMock(LegacyInfrastructure::class, []);
@@ -51,12 +51,12 @@ class TokenAdministrationTest extends BaseTestCase
             $legacyInfrastructure,
             $moduleSetup
         );
-        $filterList = new TokenFilterList(new IDFilter(new ID('unknown')));
-        $sort = TokenSorting::fromUserInput();
+        $tokenFilterList = new TokenFilterList(new IDFilter(new ID('unknown')));
+        $tokenSorting = TokenSorting::fromUserInput();
         $pagination = new Pagination();
 
         $this->expectException(InvalidLogin::class);
-        $tokenAdministration->tokens($filterList, $pagination, $sort);
+        $tokenAdministration->tokens($tokenFilterList, $pagination, $tokenSorting);
     }
 
     public function testQueryTokensNotAuthorizedFilterOnOwnUserId(): void
@@ -67,9 +67,9 @@ class TokenAdministrationTest extends BaseTestCase
         $authorizationService = $this->createPartialMock(Authorization::class, ['isAllowed']);
         $authorizationService->method('isAllowed')->willReturn(false);
 
-        $userDataType = new UserDataType($this->getUserModelStub('_testuserid'));
+        $user = new UserDataType($this->getUserModelStub('_testuserid'));
         $authenticationService = $this->createPartialMock(Authentication::class, ['getUser']);
-        $authenticationService->method('getUser')->willReturn($userDataType);
+        $authenticationService->method('getUser')->willReturn($user);
 
         $tokenInfrastructure = $this->createPartialMock(TokenInfrastructure::class, []);
         $legacyInfrastructure = $this->createPartialMock(LegacyInfrastructure::class, []);
@@ -83,28 +83,28 @@ class TokenAdministrationTest extends BaseTestCase
             $legacyInfrastructure,
             $moduleSetup
         );
-        $filterList = new TokenFilterList(new IDFilter(new ID('_testuserid')));
-        $sort = TokenSorting::fromUserInput();
+        $tokenFilterList = new TokenFilterList(new IDFilter(new ID('_testuserid')));
+        $tokenSorting = TokenSorting::fromUserInput();
         $pagination = new Pagination();
 
-        $tokenAdministration->tokens($filterList, $pagination, $sort);
+        $tokenAdministration->tokens($tokenFilterList, $pagination, $tokenSorting);
     }
 
     public function testCustomerTokensDeleteOwnByDefault(): void
     {
-        $userDataType = new UserDataType($this->getUserModelStub('_testuserid'));
+        $user = new UserDataType($this->getUserModelStub('_testuserid'));
 
         $repository = $this->createPartialMock(BaseRepository::class, ['getById']);
-        $repository->method('getById')->willReturn($userDataType);
+        $repository->method('getById')->willReturn($user);
 
         $authorizationService = $this->createPartialMock(Authorization::class, ['isAllowed']);
         $authorizationService->method('isAllowed')->willReturn(false);
 
         $authenticationService = $this->createPartialMock(Authentication::class, ['getUser']);
-        $authenticationService->method('getUser')->willReturn($userDataType);
+        $authenticationService->method('getUser')->willReturn($user);
 
         $tokenInfrastructure = $this->createPartialMock(TokenInfrastructure::class, ['tokenDelete']);
-        $tokenInfrastructure->method('tokenDelete')->with($userDataType)->willReturn(5);
+        $tokenInfrastructure->method('tokenDelete')->with($user)->willReturn(5);
 
         $legacyInfrastructure = $this->createPartialMock(LegacyInfrastructure::class, []);
         $moduleSetup = $this->createPartialMock(ModuleSetup::class, []);
@@ -123,19 +123,19 @@ class TokenAdministrationTest extends BaseTestCase
 
     public function testCustomerTokensDeleteOwnWithId(): void
     {
-        $userDataType = new UserDataType($this->getUserModelStub('_testuserid'));
+        $user = new UserDataType($this->getUserModelStub('_testuserid'));
 
         $repository = $this->createPartialMock(BaseRepository::class, ['getById']);
-        $repository->method('getById')->willReturn($userDataType);
+        $repository->method('getById')->willReturn($user);
 
         $authorizationService = $this->createPartialMock(Authorization::class, ['isAllowed']);
         $authorizationService->method('isAllowed')->willReturn(false);
 
         $authenticationService = $this->createPartialMock(Authentication::class, ['getUser']);
-        $authenticationService->method('getUser')->willReturn($userDataType);
+        $authenticationService->method('getUser')->willReturn($user);
 
         $tokenInfrastructure = $this->createPartialMock(TokenInfrastructure::class, ['tokenDelete']);
-        $tokenInfrastructure->method('tokenDelete')->with($userDataType)->willReturn(5);
+        $tokenInfrastructure->method('tokenDelete')->with($user)->willReturn(5);
 
         $legacyInfrastructure = $this->createPartialMock(LegacyInfrastructure::class, []);
         $moduleSetup = $this->createPartialMock(ModuleSetup::class, []);
@@ -159,9 +159,9 @@ class TokenAdministrationTest extends BaseTestCase
         $authorizationService = $this->createPartialMock(Authorization::class, ['isAllowed']);
         $authorizationService->method('isAllowed')->willReturn(false);
 
-        $userDataType = new UserDataType($this->getUserModelStub('_testuserid'));
+        $user = new UserDataType($this->getUserModelStub('_testuserid'));
         $authenticationService = $this->createPartialMock(Authentication::class, ['getUser']);
-        $authenticationService->method('getUser')->willReturn($userDataType);
+        $authenticationService->method('getUser')->willReturn($user);
 
         $tokenInfrastructure = $this->createPartialMock(TokenInfrastructure::class, []);
         $legacyInfrastructure = $this->createPartialMock(LegacyInfrastructure::class, []);
@@ -182,19 +182,19 @@ class TokenAdministrationTest extends BaseTestCase
 
     public function testCustomerTokensDeleteOtherUserAdmin(): void
     {
-        $userDataType = new UserDataType($this->getUserModelStub('_testuserid'));
+        $user = new UserDataType($this->getUserModelStub('_testuserid'));
 
         $repository = $this->createPartialMock(BaseRepository::class, ['getById']);
-        $repository->method('getById')->willReturn($userDataType);
+        $repository->method('getById')->willReturn($user);
 
         $authorizationService = $this->createPartialMock(Authorization::class, ['isAllowed']);
         $authorizationService->method('isAllowed')->willReturn(true);
 
         $authenticationService = $this->createPartialMock(Authentication::class, ['getUser']);
-        $authenticationService->method('getUser')->willReturn($userDataType);
+        $authenticationService->method('getUser')->willReturn($user);
 
         $tokenInfrastructure = $this->createPartialMock(TokenInfrastructure::class, ['tokenDelete']);
-        $tokenInfrastructure->method('tokenDelete')->with($userDataType)->willReturn(5);
+        $tokenInfrastructure->method('tokenDelete')->with($user)->willReturn(5);
 
         $legacyInfrastructure = $this->createPartialMock(LegacyInfrastructure::class, []);
         $moduleSetup = $this->createPartialMock(ModuleSetup::class, []);

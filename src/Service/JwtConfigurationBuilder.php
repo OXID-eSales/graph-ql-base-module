@@ -30,7 +30,7 @@ class JwtConfigurationBuilder
 
     public function getConfiguration(): Configuration
     {
-        $config = Configuration::forSymmetricSigner(
+        $configuration = Configuration::forSymmetricSigner(
             new Sha512(),
             InMemory::plainText($this->moduleConfiguration->getSignatureKey())
         );
@@ -38,11 +38,11 @@ class JwtConfigurationBuilder
         $strictValidAt = new StrictValidAt(SystemClock::fromSystemTimezone());
         $issuedBy = new IssuedBy($this->legacyService->getShopUrl());
         $permittedFor = new PermittedFor($this->legacyService->getShopUrl());
-        $signedWith = new SignedWith($config->signer(), $config->verificationKey());
+        $signedWith = new SignedWith($configuration->signer(), $configuration->verificationKey());
         $belongsToShop = new BelongsToShop($this->legacyService->getShopId());
 
-        $config->setValidationConstraints($issuedBy, $permittedFor, $signedWith, $belongsToShop, $strictValidAt);
+        $configuration->setValidationConstraints($issuedBy, $permittedFor, $signedWith, $belongsToShop, $strictValidAt);
 
-        return $config;
+        return $configuration;
     }
 }

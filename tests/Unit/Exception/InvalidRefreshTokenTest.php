@@ -17,22 +17,22 @@ final class InvalidRefreshTokenTest extends TestCase
 {
     public function testExceptionCategory(): void
     {
-        $invalidTokenException = new InvalidRefreshToken();
+        $invalidRefreshToken = new InvalidRefreshToken();
 
-        $this->assertSame(ErrorCategories::PERMISSIONERRORS, $invalidTokenException->getCategory());
+        $this->assertSame(ErrorCategories::PERMISSIONERRORS, $invalidRefreshToken->getCategory());
     }
 
     public function testIsClientSafe(): void
     {
-        $invalidTokenException = new InvalidRefreshToken();
+        $invalidRefreshToken = new InvalidRefreshToken();
 
-        $this->assertTrue($invalidTokenException->isClientSafe());
+        $this->assertTrue($invalidRefreshToken->isClientSafe());
     }
 
     public function testInvalidToken(): void
     {
-        $invalidTokenException = new InvalidRefreshToken();
+        $invalidRefreshToken = new InvalidRefreshToken();
 
-        $this->assertSame('The refresh token is invalid', $invalidTokenException->getMessage());
+        $this->assertSame('The refresh token is invalid', $invalidRefreshToken->getMessage());
     }
 }
