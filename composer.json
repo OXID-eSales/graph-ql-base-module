@@ -13,12 +13,21 @@
         "symfony/cache": "*",
         "ecodev/graphql-upload": "^7.0.0",
         "laminas/laminas-diactoros": "^3.5",
-        "myclabs/php-enum": "^1.8"
+        "myclabs/php-enum": "^1.8",
+        "oxid-esales/oxideshop-ce": "dev-b-7.3.x",
+        "oxid-esales/oxideshop-pe": "dev-b-7.3.x",
+        "oxid-esales/oxideshop-ee": "dev-b-7.3.x",
+        "oxid-esales/twig-component": "dev-b-7.3.x",
+        "oxid-esales/twig-component-pe": "dev-b-7.3.x",
+        "oxid-esales/twig-component-ee": "dev-b-7.3.x",
+        "oxid-esales/twig-admin-theme": "dev-b-7.3.x",
+        "oxid-esales/developer-tools": "dev-b-7.3.x",
+        "oxid-esales/oxideshop-doctrine-migration-wrapper": "dev-b-7.3.x",
+        "oxid-esales/apex-theme": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.4",
         "ext-xdebug": "*",
-        "oxid-esales/oxideshop-ce": "dev-b-7.3.x",
         "phpstan/phpstan": "^1.10",
         "squizlabs/php_codesniffer": "3.*",
         "phpmd/phpmd": "^2.11",
@@ -72,7 +81,45 @@
         "allow-plugins": {
             "infection/extension-installer": true,
             "oxid-esales/oxideshop-unified-namespace-generator": true,
-            "oxid-esales/oxideshop-composer-plugin": false
+            "oxid-esales/oxideshop-composer-plugin": true
+        }
+    },
+  "autoload-dev": {
+    "psr-4": {
+      "OxidEsales\\EshopCommunity\\Tests\\": "./vendor/oxid-esales/oxideshop-ce/tests"
+    }
+  },
+    "repositories": {
+        "oxid-esales/apex-theme": {
+            "type": "path",
+            "url": "./source/Application/views/apex",
+            "options": {
+                "symlink": true
+            }
+        },
+        "oxid-esales/twig-component-ee": {
+            "type": "git",
+            "url": "https://github.com/OXID-eSales/twig-component-ee"
+        },
+        "oxid-esales/twig-component-pe": {
+            "type": "git",
+            "url": "https://github.com/OXID-eSales/twig-component-pe"
+        },
+        "oxid-esales/twig-component": {
+            "type": "git",
+            "url": "https://github.com/OXID-eSales/twig-component"
+        },
+        "oxid-esales/oxideshop-ee": {
+            "type": "git",
+            "url": "https://github.com/OXID-eSales/oxideshop_ee.git"
+        },
+        "oxid-esales/oxideshop-pe": {
+            "type": "git",
+            "url": "https://github.com/OXID-eSales/oxideshop_pe.git"
+        },
+        "oxid-esales/oxideshop-ce": {
+            "type": "git",
+            "url": "https://github.com/OXID-eSales/oxideshop_ce.git"
         }
     }
 }
