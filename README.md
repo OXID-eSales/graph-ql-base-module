@@ -188,6 +188,56 @@ $ ./vendor/bin/phpunit -c vendor/oxid-esales/graphql-base/tests/phpunit.xml
 $ SELENIUM_SERVER_HOST=selenium MODULE_IDS=oe_graphql_base vendor/bin/codecept run acceptance -c vendor/oxid-esales/graphql-base/tests/codeception.yml
 ```
 
+# Development installation
+
+To be able running the tests and other preconfigured quality tools, please install the module as a [root package](https://getcomposer.org/doc/04-schema.md#root-package).
+
+The next section shows how to install the module as a root package by using the OXID eShop SDK.
+
+In case of different environment usage, please adjust by your own needs.
+
+# Development installation on OXID eShop SDK
+
+The installation instructions below are shown for the current [SDK](https://github.com/OXID-eSales/docker-eshop-sdk)
+for shop 7.3. Make sure your system meets the requirements of the SDK.
+
+0. Ensure all docker containers are down to avoid port conflicts
+
+1. Clone the SDK for the new project
+```shell
+echo MyProject && git clone https://github.com/OXID-eSales/docker-eshop-sdk.git $_ && cd $_
+```
+
+2. Clone the repository to the source directory
+```shell
+git clone --recurse-submodules https://github.com/OXID-eSales/graphql-base-module.git --branch=b-7.3.x ./source
+```
+
+3. Run the recipe to setup the development environment, you can decide which shop edition to install. Omitting the flag installs EE.
+```shell
+./source/recipes/setup-development.sh -s CE
+```
+
+You should be able to access the shop with http://localhost.local and the admin panel with http://localhost.local/admin
+(credentials: noreply@oxid-esales.com / admin)
+
+### Running tests locally
+
+Check the "scripts" section in the `composer.json` file for the available commands. Those commands can be executed
+by connecting to the php container and running the command from there, example:
+
+```shell
+make php
+composer tests-coverage
+```
+
+Commands can be also triggered directly on the container with docker compose, example:
+
+```shell
+docker compose exec -T php composer tests-coverage
+```
+
+
 ## Issues
 
 To report issues with GraphQL module please use the [OXID eShop bugtracking system](https://bugs.oxid-esales.com/).

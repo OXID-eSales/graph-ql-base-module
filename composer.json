@@ -31,7 +31,7 @@
         "codeception/module-asserts": "^3.0"
     },
   "conflict": {
-    "oxid-esales/oxideshop-ce": "<7.2"
+    "oxid-esales/oxideshop-ce": "<7.3"
   },
     "autoload": {
         "psr-4": {
@@ -72,7 +72,12 @@
         "allow-plugins": {
             "infection/extension-installer": true,
             "oxid-esales/oxideshop-unified-namespace-generator": true,
-            "oxid-esales/oxideshop-composer-plugin": false
+            "oxid-esales/oxideshop-composer-plugin": true
         }
+    },
+  "autoload-dev": {
+    "psr-4": {
+      "OxidEsales\\EshopCommunity\\Tests\\": "./vendor/oxid-esales/oxideshop-ce/tests"
     }
+  }
 }
