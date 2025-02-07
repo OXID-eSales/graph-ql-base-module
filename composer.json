@@ -35,8 +35,7 @@
   },
     "autoload": {
         "psr-4": {
-            "OxidEsales\\GraphQL\\Base\\": "src",
-            "OxidEsales\\GraphQL\\Base\\Tests\\": "tests"
+            "OxidEsales\\GraphQL\\Base\\": "src"
         }
     },
     "minimum-stability": "dev",
@@ -77,7 +76,8 @@
     },
   "autoload-dev": {
     "psr-4": {
-      "OxidEsales\\EshopCommunity\\Tests\\": "./vendor/oxid-esales/oxideshop-ce/tests"
+      "OxidEsales\\EshopCommunity\\Tests\\": "./vendor/oxid-esales/oxideshop-ce/tests",
+        "OxidEsales\\GraphQL\\Base\\Tests\\": "./tests"
     }
   }
 }

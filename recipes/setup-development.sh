@@ -41,25 +41,10 @@ $SCRIPT_PATH/parts/shared/require_shop_edition_packages.sh -e"${edition}" -v"dev
 $SCRIPT_PATH/parts/shared/require_twig_components.sh -e"${edition}" -b"b-7.3.x"
 $SCRIPT_PATH/parts/shared/require.sh -n"oxid-esales/developer-tools" -v"dev-b-7.3.x"
 $SCRIPT_PATH/parts/shared/require.sh -n"oxid-esales/oxideshop-doctrine-migration-wrapper" -v"dev-b-7.3.x"
-docker compose exec -T php composer require oxid-esales/apex-theme dev-b-7.3.x
+$SCRIPT_PATH/parts/shared/require_theme_dev.sh -t"apex" -b"b-7.3.x"
 
 git clone https://github.com/OXID-eSales/oxapi-documentation source/documentation/oxapi-documentation
 make docpath=./source/documentation/oxapi-documentation addsphinxservice
-
-docker-compose exec -T -w /var/www php \
-       composer config allow-plugins.oxid-esales/oxideshop-composer-plugin true
-
-perl -pi -e '
-    BEGIN {
-        $inserted = 0;
-        $autoload_dev = qq(  "autoload-dev": {\n    "psr-4": {\n      "OxidEsales\\\\EshopCommunity\\\\Tests\\\\": "./vendor/oxid-esales/oxideshop-ce/tests"\n    }\n  },\n);
-    }
-    if (!$inserted && $_ =~ /"repositories":/) {
-        $_ = $autoload_dev . $_;
-        $inserted = 1;
-    }
-' source/composer.json
-
 
 make up
 
@@ -72,10 +57,19 @@ perl -pi\
 $SCRIPT_PATH/parts/shared/setup_database.sh --no-demodata
 
 docker compose exec -T php vendor/bin/oe-console oe:module:install ./
-
-$SCRIPT_PATH/parts/shared/reset_database.sh --no-demodata
+docker compose exec -T php vendor/bin/oe-eshop-doctrine_migration migrations:migrate
+docker compose exec -T php vendor/bin/oe-eshop-db_views_generate
 
 docker compose exec -T php vendor/bin/oe-console oe:module:activate oe_graphql_base
 docker compose exec -T php vendor/bin/oe-console oe:theme:activate apex
 
 $SCRIPT_PATH/parts/shared/create_admin.sh
+
+# Register all related project packages git repositories
+mkdir -p .idea; mkdir -p source/.idea; cp "${SCRIPT_PATH}/parts/bases/vcs.xml.base" .idea/vcs.xml
+perl -pi\
+  -e 's#</component>#<mapping directory="\$PROJECT_DIR\$/source" vcs="Git" />\n  </component>#g;'\
+  -e 's#</component>#<mapping directory="\$PROJECT_DIR\$/source/vendor/oxid-esales/oxideshop-ce" vcs="Git" />\n  </component>#g;'\
+  -e 's#</component>#<mapping directory="\$PROJECT_DIR\$/source/vendor/oxid-esales/oxideshop-pe" vcs="Git" />\n  </component>#g;'\
+  -e 's#</component>#<mapping directory="\$PROJECT_DIR\$/source/vendor/oxid-esales/oxideshop-ee" vcs="Git" />\n  </component>#g;'\
+  .idea/vcs.xml
