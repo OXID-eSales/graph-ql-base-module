@@ -30,9 +30,9 @@
         "oxid-esales/codeception-modules": "dev-b-7.3.x",
         "codeception/module-asserts": "^3.0"
     },
-  "conflict": {
-    "oxid-esales/oxideshop-ce": "<7.3"
-  },
+    "conflict": {
+        "oxid-esales/oxideshop-ce": "<7.3"
+    },
     "autoload": {
         "psr-4": {
             "OxidEsales\\GraphQL\\Base\\": "src"
@@ -76,7 +76,7 @@
     },
   "autoload-dev": {
     "psr-4": {
-      "OxidEsales\\EshopCommunity\\Tests\\": "./vendor/oxid-esales/oxideshop-ce/tests",
+        "OxidEsales\\EshopCommunity\\Tests\\": "./vendor/oxid-esales/oxideshop-ce/tests",
         "OxidEsales\\GraphQL\\Base\\Tests\\": "./tests"
     }
   }
