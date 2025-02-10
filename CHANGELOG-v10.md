@@ -4,11 +4,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [10.1.0] - unreleased
-
-## Changed
-- Update module to work with OXID eShop 7.3
-
 ## [10.0.0] - 2024-11-27
 This is stable release for v10.0.0. No changes have been made since v10.0.0-rc.1.
 
@@ -45,6 +40,5 @@ This is stable release for v10.0.0. No changes have been made since v10.0.0-rc.1
 ## Changed
 - Renamed OxidEsales\GraphQL\Base\Infrastructure\Token::cleanUpTokens() to deleteOrphanedTokens()
 
-[10.1.0]: https://github.com/OXID-eSales/graphql-base-module/compare/v10.0.0...b-7.3.x
 [10.0.0]: https://github.com/OXID-eSales/graphql-base-module/compare/v10.0.0-rc.1...v10.0.0
 [10.0.0-rc.1]: https://github.com/OXID-eSales/graphql-base-module/compare/v9.0.0...v10.0.0-rc.1

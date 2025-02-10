@@ -53,13 +53,11 @@ class Token
         ?TokenSorting $sort = null
     ): array {
         return $this->tokenAdministration->tokens(
-            $filter ?? TokenFilterList::fromUserInput(
-                new IDFilter(
-                    $this->authentication->getUser()->id()
-                )
+            $filter ?? new TokenFilterList(
+                new IDFilter($this->authentication->getUser()->id())
             ),
             $pagination ?? new Pagination(),
-            $sort ?? TokenSorting::fromUserInput(Sorting::SORTING_ASC)
+            $sort ?? new TokenSorting(Sorting::SORTING_ASC),
         );
     }
 

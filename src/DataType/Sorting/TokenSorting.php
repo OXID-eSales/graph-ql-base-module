@@ -9,20 +9,21 @@ declare(strict_types=1);
 
 namespace OxidEsales\GraphQL\Base\DataType\Sorting;
 
-use TheCodingMachine\GraphQLite\Annotations\Factory;
+use TheCodingMachine\GraphQLite\Annotations\Field;
+use TheCodingMachine\GraphQLite\Annotations\Input;
 
+#[Input]
 final class TokenSorting extends Sorting
 {
     /**
-     * @Factory(name="TokenSorting",default=true)
-     *
      * Tokens will be sorted by their expiration date ('expires_at' column).
      */
-    public static function fromUserInput(
-        string $expiresAt = self::SORTING_ASC
-    ): self {
-        return new self([
-            'expires_at' => $expiresAt,
+    public function __construct(
+        #[Field]
+        private string $expiresAt = self::SORTING_ASC,
+    ) {
+        parent::__construct([
+            'expires_at' => $this->expiresAt,
         ]);
     }
 }
